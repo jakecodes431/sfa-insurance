@@ -4,6 +4,7 @@ import { businessConfig } from '@/config/business.config';
 import { useLocale } from '@/hooks/useLocale';
 import { useContent } from '@/lib/content';
 import { formatTime } from '@/lib/format';
+import { asset } from '@/lib/asset';
 
 export function Footer() {
   const { t } = useTranslation();
@@ -16,7 +17,7 @@ export function Footer() {
         {/* Brand */}
         <div>
           <img
-            src={businessConfig.logos.badgeSquare}
+            src={asset(businessConfig.logos.badgeSquare)}
             alt={t('header.logoAlt')}
             className="h-28 w-28 sm:h-32 sm:w-32"
             width={1254}

@@ -4,6 +4,9 @@ import path from 'node:path';
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  // Deploy base path. '/' for local + root hosts; set VITE_BASE=/sfa-insurance/ for
+  // the GitHub Pages project subpath (see .github/workflows/deploy.yml).
+  base: process.env.VITE_BASE || '/',
   plugins: [react()],
   resolve: {
     alias: {

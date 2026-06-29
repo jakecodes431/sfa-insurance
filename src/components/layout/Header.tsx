@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { businessConfig } from '@/config/business.config';
 import { PhoneIcon } from '@/components/ui/Icons';
 import { cn } from '@/lib/cn';
+import { asset } from '@/lib/asset';
 
 // Single-page landing: nav anchors to sections, not separate pages. No auth, no
 // language toggle, no admin link.
@@ -42,7 +43,7 @@ export function Header() {
         {/* Logo lockup: shield mark (supplies "SFA") + wordmark */}
         <Link to="/" className="flex shrink-0 items-center gap-2.5" onClick={() => setOpen(false)}>
           <img
-            src={businessConfig.logos.primaryBanner}
+            src={asset(businessConfig.logos.primaryBanner)}
             alt={t('header.logoAlt')}
             className="h-9 w-auto sm:h-10"
             width={512}

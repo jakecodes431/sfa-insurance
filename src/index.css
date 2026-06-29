@@ -4,21 +4,21 @@
   font-style: normal;
   font-weight: 400;
   font-display: swap;
-  src: url('/fonts/sf-pro-display-regular.woff') format('woff');
+  src: url('./fonts/sf-pro-display-regular.woff') format('woff');
 }
 @font-face {
   font-family: 'SF Pro Display';
   font-style: normal;
   font-weight: 500;
   font-display: swap;
-  src: url('/fonts/sf-pro-display-medium.woff') format('woff');
+  src: url('./fonts/sf-pro-display-medium.woff') format('woff');
 }
 @font-face {
   font-family: 'SF Pro Display';
   font-style: normal;
   font-weight: 700;
   font-display: swap;
-  src: url('/fonts/sf-pro-display-bold.woff') format('woff');
+  src: url('./fonts/sf-pro-display-bold.woff') format('woff');
 }
 
 @tailwind base;

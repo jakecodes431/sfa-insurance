@@ -12,6 +12,7 @@ import { getFeaturedReviews } from '@/lib/data';
 import { useContent } from '@/lib/content';
 import { buildBusinessJsonLd } from '@/lib/schema';
 import { gsap } from '@/lib/gsap';
+import { asset } from '@/lib/asset';
 import type { ReviewRow } from '@/types/database.types';
 
 const CARRIERS = [
@@ -196,7 +197,7 @@ export default function Home() {
             {CARRIERS.map((c) => (
               <li key={c.name} data-carrier className="flex h-9 w-24 items-center justify-center sm:w-28">
                 <img
-                  src={c.src}
+                  src={asset(c.src)}
                   alt={`${c.name} logo`}
                   loading="lazy"
                   className="max-h-7 max-w-full object-contain opacity-80 transition-opacity duration-200 hover:opacity-100 sm:max-h-8"
