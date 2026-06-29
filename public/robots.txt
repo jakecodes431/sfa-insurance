@@ -1,0 +1,3 @@
+# PREVIEW/MOCK default: do not index. Flip to production rules at wire-up.
+User-agent: *
+Disallow: /

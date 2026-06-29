@@ -1,0 +1,33 @@
+{
+  "name": "Maple Street Services",
+  "short_name": "Maple Street",
+  "description": "Friendly, reliable local service in Springfield, IL. Book online or call.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0B0F17",
+  "theme_color": "#0B0F17",
+  "lang": "en",
+  "categories": ["business"],
+  "icons": [
+    {
+      "src": "/brand/logo-badge-square.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/brand/logo-badge-square.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/brand/logo-badge-square.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

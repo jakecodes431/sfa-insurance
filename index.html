@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/png" href="/brand/logo-sfa.png" />
+    <link rel="apple-touch-icon" href="/brand/logo-sfa.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#1C6B53" />
+    <!-- iOS standalone PWA -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="SFA Insurance" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <!-- Display face SF Pro Display is self-hosted (src/index.css @font-face). Preload bold. -->
+    <link rel="preload" href="/fonts/sf-pro-display-bold.woff" as="font" type="font/woff" crossorigin />
+    <!-- Inter for body / fine print legibility. -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <title>SFA Insurance Group — Medicare, Dental, Vision & Life Insurance</title>
+    <meta
+      name="description"
+      content="Talk with a licensed agent about Medicare, dental, vision, and life insurance. No cost, no pressure. Compare plans and get answers."
+    />
+    <!-- Light first paint (before CSS/JS) so there's no flash. -->
+    <style>
+      html,
+      body {
+        background-color: #F4F7FB;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

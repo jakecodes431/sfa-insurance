@@ -1,0 +1,284 @@
+/* SF Pro Display — self-hosted (public/fonts). Display + UI face. */
+@font-face {
+  font-family: 'SF Pro Display';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/sf-pro-display-regular.woff') format('woff');
+}
+@font-face {
+  font-family: 'SF Pro Display';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('/fonts/sf-pro-display-medium.woff') format('woff');
+}
+@font-face {
+  font-family: 'SF Pro Display';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('/fonts/sf-pro-display-bold.woff') format('woff');
+}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ===========================================================================
+   SFA Insurance Group — "quiet authority" editorial theme.
+   Warm ivory paper · deep navy ink · single evergreen accent. Token names are
+   SEMANTIC SLOTS (see src/config/theme.config.ts): red=accent (evergreen),
+   black=page bg (ivory), charcoal=surface (white), steel=warm hairline,
+   chrome=muted text, white=primary ink (navy). RGB channels mirror the config.
+   =========================================================================== */
+@layer base {
+  :root {
+    --brand-red: 28 91 214; /* #1C5BD6 SFA blue accent */
+    --brand-red-dark: 22 72 173; /* #1648AD accent hover */
+    --brand-black: 244 247 251; /* #F4F7FB light blue-slate bg */
+    --brand-charcoal: 255 255 255; /* #FFFFFF surfaces */
+    --brand-steel: 220 227 236; /* #DCE3EC hairline */
+    --brand-chrome: 74 90 112; /* #4A5A70 muted text */
+    --brand-white: 14 39 71; /* #0E2747 navy ink */
+    --hdr-h: 4.5rem;
+
+    /* Color vars consumed by aurora-background.tsx (Tailwind default palette values).
+       Defined here directly instead of via the addVariablesForColors plugin, which would
+       flatten the brand.* tokens into self-referential vars and break the palette. */
+    --white: #ffffff;
+    --black: #000000;
+    --transparent: transparent;
+    --blue-300: #93c5fd;
+    --blue-400: #60a5fa;
+    --blue-500: #3b82f6;
+    --indigo-300: #a5b4fc;
+    --violet-200: #ddd6fe;
+  }
+
+  @media (min-width: 640px) {
+    :root {
+      --hdr-h: 5rem;
+    }
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-brand-black text-brand-white font-sans antialiased;
+    /* Faint cool halo so the light bg has depth, never flat. */
+    background-image: radial-gradient(
+      120% 55% at 50% -10%,
+      rgb(255 255 255 / 0.9),
+      transparent 60%
+    );
+    background-attachment: fixed;
+  }
+
+  /* SF Pro Display headings — large, tightly tracked, confident. */
+  h1,
+  h2,
+  h3,
+  h4 {
+    @apply font-display font-bold text-brand-white;
+    letter-spacing: -0.02em;
+  }
+
+  ::selection {
+    background: rgb(var(--brand-red));
+    color: #ffffff;
+  }
+
+  * {
+    scrollbar-color: rgb(var(--brand-steel)) rgb(var(--brand-black));
+  }
+  ::-webkit-scrollbar {
+    width: 11px;
+    height: 11px;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: rgb(var(--brand-steel));
+    border-radius: 6px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgb(var(--brand-chrome));
+  }
+}
+
+@layer components {
+  /* Primary CTA — evergreen pill, confident, soft depth (no neon). */
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-full bg-brand-red px-7 py-3.5
+      font-display text-base font-semibold text-white shadow-sm transition-all duration-200
+      hover:-translate-y-0.5 hover:bg-brand-red-dark hover:shadow-card focus:outline-none
+      focus:ring-2 focus:ring-brand-red focus:ring-offset-2 focus:ring-offset-brand-black
+      active:translate-y-0 disabled:cursor-not-allowed disabled:opacity-50 disabled:shadow-none;
+  }
+
+  /* Secondary — hairline pill, navy ink. */
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 rounded-full border border-brand-steel
+      bg-brand-charcoal/70 px-7 py-3.5 font-display text-base font-semibold text-brand-white
+      transition-all duration-200 hover:-translate-y-0.5 hover:border-brand-white/30
+      hover:bg-brand-charcoal focus:outline-none focus:ring-2 focus:ring-brand-white/20
+      active:translate-y-0;
+  }
+
+  .card {
+    @apply rounded-2xl border border-brand-steel bg-brand-charcoal p-6 shadow-card;
+  }
+
+  /* Interactive card: hairline accent reveal + lift. */
+  .card-interactive {
+    @apply card relative overflow-hidden transition-all duration-300 hover:-translate-y-1
+      hover:border-brand-red/40 hover:shadow-lift;
+  }
+  .card-interactive::before {
+    content: '';
+    @apply absolute inset-x-0 top-0 h-px origin-left scale-x-0 bg-brand-red
+      transition-transform duration-500;
+  }
+  .card-interactive:hover::before {
+    @apply scale-x-100;
+  }
+
+  .input-field {
+    /* 48px target + 16px text: comfortable for older eyes, no iOS zoom. */
+    @apply min-h-[48px] w-full rounded-xl border border-brand-steel bg-white px-4 py-3
+      text-base text-brand-white transition-all placeholder:text-brand-chrome/55
+      focus:border-brand-red focus:outline-none focus:ring-2 focus:ring-brand-red/25;
+  }
+
+  .container-content {
+    @apply mx-auto w-full max-w-content px-5 sm:px-8 lg:px-12;
+  }
+
+  /* Editorial eyebrow: a short rule + tracked label in the accent. */
+  .eyebrow {
+    @apply inline-flex items-center gap-3 font-display text-xs font-semibold uppercase
+      tracking-ultra text-brand-red;
+  }
+  .eyebrow::before {
+    content: '';
+    @apply h-px w-8 bg-brand-red/60;
+  }
+
+  .text-chrome {
+    @apply text-brand-white;
+  }
+
+  /* Icon chip — evergreen-tinted square. */
+  .icon-chip {
+    @apply inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border
+      border-brand-red/20 bg-brand-red/[0.07] text-2xl text-brand-red;
+  }
+
+  .panel {
+    @apply relative rounded-2xl border border-brand-steel bg-brand-charcoal p-6 shadow-card sm:p-8;
+  }
+  .panel-ring {
+    @apply panel;
+    box-shadow:
+      inset 0 0 0 1px rgb(var(--brand-red) / 0.18),
+      var(--tw-shadow, 0 0 transparent);
+  }
+
+  .marquee-mask {
+    -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+    mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+  }
+}
+
+@layer utilities {
+  /* Oversized editorial display headline (font-family inherits from the h1 base rule). */
+  .display-hero {
+    font-weight: 700;
+    letter-spacing: -0.035em;
+    line-height: 0.96;
+  }
+
+  /* Big index numeral for steps / coverage list (outlined ink). */
+  .index-num {
+    @apply font-display font-bold text-brand-white/15;
+    letter-spacing: -0.04em;
+    line-height: 1;
+  }
+
+  /* Hairline rule. */
+  .rule {
+    @apply border-t border-brand-steel;
+  }
+
+  /* Faint grid for section backgrounds. */
+  .bg-grid {
+    background-image:
+      linear-gradient(rgb(14 39 71 / 0.035) 1px, transparent 1px),
+      linear-gradient(90deg, rgb(14 39 71 / 0.035) 1px, transparent 1px);
+    background-size: 48px 48px;
+  }
+
+  /* Soft blurred orb for the GSAP-animated hero background (blue tints). */
+  .orb {
+    @apply pointer-events-none absolute rounded-full blur-3xl;
+    will-change: transform;
+  }
+
+  /* Legacy texture slots neutralized on this theme (keep class refs resolving). */
+  .bg-tread,
+  .bg-hazard {
+    background-image: none;
+  }
+
+  .reveal {
+    @apply animate-fade-up;
+  }
+  .spin-center {
+    transform-box: fill-box;
+    transform-origin: center;
+  }
+
+  .pb-safe {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  .pt-safe {
+    padding-top: env(safe-area-inset-top);
+  }
+  .px-safe {
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+  }
+  .bottom-safe {
+    bottom: env(safe-area-inset-bottom);
+  }
+  .mb-rescue {
+    margin-bottom: calc(4.25rem + env(safe-area-inset-bottom));
+  }
+}
+
+/* Hero load stagger — children fade up in sequence on first paint. */
+.stagger > * {
+  opacity: 0;
+  animation: fade-up 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.stagger > *:nth-child(1) { animation-delay: 0.05s; }
+.stagger > *:nth-child(2) { animation-delay: 0.15s; }
+.stagger > *:nth-child(3) { animation-delay: 0.25s; }
+.stagger > *:nth-child(4) { animation-delay: 0.35s; }
+.stagger > *:nth-child(5) { animation-delay: 0.45s; }
+.stagger > *:nth-child(6) { animation-delay: 0.55s; }
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+  .stagger > * {
+    opacity: 1;
+  }
+}
