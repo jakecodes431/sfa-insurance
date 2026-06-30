@@ -92,7 +92,7 @@ export const KB: KbEntry[] = [
       'appointment', 'book', 'schedule', 'callback',
     ],
     answer:
-      "You can reach a licensed agent at (833) 791-1800, Monday to Friday, 9 AM to 5 PM EST. You can also fill out the form on this page and we'll call you back at your preferred time.",
+      "You can reach a licensed agent at (833) 791-1800, Monday to Friday, 9 AM to 5 PM EST. To book a time, click “Speak With a Specialist” at the top of the page and pick a slot on the calendar, or fill out the form and we'll call you back at your preferred time.",
   },
   {
     keywords: ['privacy', 'secure', 'security', 'hipaa', 'data', 'safe', 'protected', 'personal information'],
