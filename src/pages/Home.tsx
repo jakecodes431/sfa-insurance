@@ -18,6 +18,7 @@ import type { ReviewRow } from '@/types/database.types';
 
 const CARRIERS = [
   { name: 'Aetna', src: '/carriers/aetna.png' },
+  { name: 'Anthem', src: '/carriers/anthem.png' },
   { name: 'Ambetter', src: '/carriers/ambetter.png' },
   { name: 'Cigna', src: '/carriers/cigna.png' },
   { name: 'UnitedHealthcare', src: '/carriers/unitedhealthcare.png' },

@@ -80,11 +80,11 @@ export const KB: KbEntry[] = [
   },
   {
     keywords: [
-      'carrier', 'carriers', 'company', 'companies', 'aetna', 'humana', 'uhc', 'unitedhealthcare',
-      'cigna', 'work with', 'which plans',
+      'carrier', 'carriers', 'company', 'companies', 'aetna', 'anthem', 'humana', 'uhc',
+      'unitedhealthcare', 'cigna', 'work with', 'which plans',
     ],
     answer:
-      "We're partnered with top carriers including Aetna, Cigna, UnitedHealthcare, Ambetter, Oscar, and Healthfirst, and we compare plans across them to find the right fit. (We don't offer every plan available in your area; information is limited to the plans we offer.)",
+      "We're partnered with top carriers including Aetna, Anthem, Cigna, UnitedHealthcare, Ambetter, Oscar, and Healthfirst, and we compare plans across them to find the right fit. (We don't offer every plan available in your area; information is limited to the plans we offer.)",
   },
   {
     keywords: [
