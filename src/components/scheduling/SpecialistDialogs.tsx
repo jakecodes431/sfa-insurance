@@ -108,6 +108,20 @@ export function ScheduleDialog({ open, onClose, onCall }: DialogProps & { onCall
           )}
         </div>
 
+        {/* Reciprocal hand-off: prefer a call instead of picking a time. */}
+        {calUrl && (
+          <div className="mt-4 text-center">
+            <button
+              type="button"
+              onClick={onCall}
+              className="group inline-flex items-center gap-2 text-sm font-semibold text-brand-white transition-colors hover:text-brand-red"
+            >
+              <PhoneIcon className="text-base" />
+              Prefer to talk now? Call {businessConfig.phone}
+            </button>
+          </div>
+        )}
+
         <TrustStrip />
         <Disclaimer />
       </div>
