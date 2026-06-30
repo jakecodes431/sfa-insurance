@@ -388,6 +388,7 @@ export const es: TranslationDict = {
       inactive: 'Oculto',
     },
     tabs: {
+      overview: 'Resumen',
       leads: 'Prospectos',
       bookings: 'Citas',
       services: 'Servicios',

@@ -10,6 +10,7 @@
  * the registry, then opting the tenant in.
  */
 export type AdminModule =
+  | 'overview'
   | 'leads'
   | 'bookings'
   | 'services'
@@ -38,4 +39,4 @@ export const ALL_ADMIN_MODULES: AdminModule[] = [
  * and reviews. No payments/invoices/orders — SFA never charges the consumer (carriers
  * process enrollments + commission).
  */
-export const SFA_ADMIN_MODULES: AdminModule[] = ['leads', 'bookings', 'reviews'];
+export const SFA_ADMIN_MODULES: AdminModule[] = ['overview', 'leads', 'bookings', 'reviews'];

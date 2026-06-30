@@ -390,6 +390,7 @@ export const en = {
       inactive: 'Hidden',
     },
     tabs: {
+      overview: 'Overview',
       leads: 'Leads',
       bookings: 'Appointments',
       services: 'Services',

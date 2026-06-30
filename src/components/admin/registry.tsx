@@ -10,6 +10,7 @@
  */
 import type { ComponentType } from 'react';
 import type { AdminModule } from '@/config/admin.config';
+import { OverviewDashboard } from './OverviewDashboard';
 import { LeadsManager } from './LeadsManager';
 import { BookingsQueue } from './BookingsQueue';
 import { ServicesTab } from './ServicesTab';
@@ -29,6 +30,7 @@ export interface AdminModuleDef {
 
 /** Ordered registry — the tab bar follows this order, filtered to enabled modules. */
 export const ADMIN_MODULES: AdminModuleDef[] = [
+  { id: 'overview', labelKey: 'admin.tabs.overview', Component: OverviewDashboard },
   { id: 'leads', labelKey: 'admin.tabs.leads', Component: LeadsManager },
   { id: 'bookings', labelKey: 'admin.tabs.bookings', Component: BookingsQueue },
   { id: 'services', labelKey: 'admin.tabs.services', Component: ServicesTab },
