@@ -49,13 +49,13 @@ export function Modal({ open, onClose, labelledBy, size = 'max-w-lg', children }
         role="dialog"
         aria-modal="true"
         aria-labelledby={labelledBy}
-        className={`animate-fade-up relative z-10 my-auto w-full ${size} rounded-2xl bg-white text-brand-black shadow-2xl outline-none`}
+        className={`animate-fade-up relative z-10 my-auto w-full ${size} rounded-2xl border border-brand-steel bg-brand-charcoal text-brand-white shadow-2xl outline-none`}
       >
         <button
           type="button"
           onClick={onClose}
           aria-label="Close"
-          className="absolute right-4 top-4 z-10 flex h-9 w-9 items-center justify-center rounded-full border border-black/10 bg-white/90 text-black/45 shadow-sm backdrop-blur transition hover:bg-black/5 hover:text-black"
+          className="absolute right-4 top-4 z-10 flex h-9 w-9 items-center justify-center rounded-full border border-brand-steel bg-brand-charcoal/90 text-brand-chrome shadow-sm backdrop-blur transition hover:bg-brand-black hover:text-brand-white"
         >
           <CloseIcon className="text-lg" />
         </button>
