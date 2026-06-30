@@ -20,7 +20,7 @@ import type {
   InvoiceLineItemRow,
 } from '@/types/database.types';
 
-const KEY = 'sfp.mockStore.v1';
+const KEY = 'sfp.mockStore.v2';
 
 interface MockDb {
   leads: LeadRow[];
@@ -144,6 +144,79 @@ function seedLeads(tenantId: string): LeadRow[] {
   ];
 }
 
+/** Consultation appointments for the admin Appointments queue. These mirror what a Cal
+ *  booking (or a "Speak With a Specialist" request) creates: a person, a product line,
+ *  and a requested time. No vehicles, no dispatch — this is a phone-consult agency. */
+function seedBookings(): BookingRow[] {
+  const base = {
+    profile_id: null as string | null,
+    booking_type: 'in_shop' as const, // unused slot for SFA; the queue never shows it
+    location_address: null as string | null,
+    location_lat: null as number | null,
+    location_lng: null as number | null,
+    vehicle_info: null,
+    locale: 'en' as const,
+    payment_status: 'none' as const,
+    deposit_cents: 0,
+    stripe_payment_intent_id: null as string | null,
+    calcom_booking_id: null as string | null,
+  };
+  return [
+    {
+      ...base,
+      id: 'appt-1',
+      guest_name: 'Eleanor Briggs',
+      guest_email: 'eleanor.briggs@example.com',
+      guest_phone: '(815) 555-0190',
+      service_slug: 'medicare',
+      status: 'requested',
+      issue_description: 'New to Medicare, wants to compare Advantage vs Supplement.',
+      scheduled_at: '2026-07-02T15:00:00.000Z',
+      created_at: '2026-06-29T13:20:00.000Z',
+      updated_at: '2026-06-29T13:20:00.000Z',
+    },
+    {
+      ...base,
+      id: 'appt-2',
+      guest_name: 'Marcus Hill',
+      guest_email: 'marcus.hill@example.com',
+      guest_phone: '(248) 555-0176',
+      service_slug: 'dental-vision',
+      status: 'confirmed',
+      issue_description: 'Standalone dental + vision for him and his wife.',
+      scheduled_at: '2026-07-01T18:30:00.000Z',
+      created_at: '2026-06-28T16:45:00.000Z',
+      updated_at: '2026-06-28T17:10:00.000Z',
+    },
+    {
+      ...base,
+      id: 'appt-3',
+      guest_name: 'Rosa Delgado',
+      guest_email: 'rosa.delgado@example.com',
+      guest_phone: '(312) 555-0148',
+      service_slug: 'life-final-expense',
+      status: 'completed',
+      issue_description: 'Final expense for her father; reviewed three carriers.',
+      scheduled_at: '2026-06-26T17:00:00.000Z',
+      created_at: '2026-06-24T14:05:00.000Z',
+      updated_at: '2026-06-26T17:40:00.000Z',
+    },
+    {
+      ...base,
+      id: 'appt-4',
+      guest_name: 'Anthony Russo',
+      guest_email: 'a.russo@example.com',
+      guest_phone: '(773) 555-0133',
+      service_slug: 'under-65-health',
+      status: 'requested',
+      issue_description: 'Lost employer coverage, needs an individual plan.',
+      scheduled_at: '2026-07-03T14:00:00.000Z',
+      created_at: '2026-06-29T19:02:00.000Z',
+      updated_at: '2026-06-29T19:02:00.000Z',
+    },
+  ];
+}
+
 function seedReviews(): ReviewRow[] {
   return [
     {
@@ -258,7 +331,7 @@ function load(): MockDb {
   }
   cache = {
     leads: seedLeads(getActiveTenant().id),
-    bookings: [],
+    bookings: seedBookings(),
     orders: [],
     promotions: seedPromotions(),
     promoRegistrations: [],
