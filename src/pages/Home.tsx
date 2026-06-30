@@ -8,6 +8,7 @@ import { StarRating } from '@/components/ui/StarRating';
 import { LeadCaptureForm } from '@/components/forms/LeadCaptureForm';
 import { PhoneIcon, ArrowRightIcon, CalendarIcon } from '@/components/ui/Icons';
 import { useScheduling } from '@/components/scheduling/SchedulingProvider';
+import { FaqSection } from '@/components/sections/FaqSection';
 import { AuroraBackground } from '@/components/ui/aurora-background';
 import { getFeaturedReviews } from '@/lib/data';
 import { useContent } from '@/lib/content';
@@ -328,6 +329,9 @@ export default function Home() {
           </div>
         </section>
       )}
+
+      {/* ===== FAQ — editorial accordion ===== */}
+      <FaqSection />
 
       {/* ===== FINAL CTA — deep navy band ===== */}
       <section className="bg-brand-white">

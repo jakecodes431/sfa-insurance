@@ -12,6 +12,7 @@ import { useScheduling } from '@/components/scheduling/SchedulingProvider';
 const NAV_ITEMS = [
   { href: '#coverage', label: 'Plans' },
   { href: '#reviews', label: 'Reviews' },
+  { href: '#faq', label: 'FAQ' },
 ];
 
 const navLinkClass = 'text-sm font-medium tracking-tight text-brand-chrome transition-colors hover:text-brand-white';
