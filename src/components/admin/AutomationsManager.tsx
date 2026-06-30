@@ -27,11 +27,11 @@ function Toggle({ on, onClick }: { on: boolean; onClick: () => void }) {
       role="switch"
       aria-checked={on}
       onClick={onClick}
-      className={`relative h-6 w-11 shrink-0 rounded-full transition-colors ${on ? 'bg-brand-red' : 'bg-brand-steel'}`}
+      className={`flex h-6 w-11 shrink-0 items-center rounded-full p-0.5 transition-colors ${
+        on ? 'justify-end bg-brand-red' : 'justify-start bg-brand-steel'
+      }`}
     >
-      <span
-        className={`absolute top-0.5 h-5 w-5 rounded-full bg-white shadow-sm transition-transform ${on ? 'translate-x-[1.4rem]' : 'translate-x-0.5'}`}
-      />
+      <span className="h-5 w-5 rounded-full bg-white shadow-sm" />
     </button>
   );
 }
