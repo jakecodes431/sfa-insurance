@@ -102,8 +102,9 @@ export const businessConfig = {
    */
   scheduling: {
     provider: 'cal',
-    // e.g. 'https://calendar.serviceflowpro.co/sfa-insurance/medicare-consult'
-    calUrl: '',
+    // Temporary self-hosted Cal link (Jake's 15-min). Replace with the SFA event type
+    // (e.g. calendar.serviceflowpro.co/sfa-insurance/medicare-consult) when it's created.
+    calUrl: 'https://calendar.serviceflowpro.co/jake/15min',
     hoursLabel: 'Mon-Fri, 9 AM to 5 PM EST',
   },
 } as const;
