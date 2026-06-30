@@ -167,7 +167,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       signIn: async (email, password) => {
         if (MOCK_MODE) {
-          mockSignInAs(email.includes('admin') ? 'admin' : 'customer');
+          // Staff-only portal in the demo — any credentials sign in as admin so the
+          // dashboard is always reachable (no customer accounts exist).
+          mockSignInAs('admin');
           return { error: null };
         }
         const { error } = await supabase.auth.signInWithPassword({ email, password });

@@ -27,8 +27,10 @@ export function ProtectedRoute({
     return <Navigate to="/login" state={{ from: location.pathname }} replace />;
   }
 
+  // Not an admin: send back to the staff sign-in (no customer dashboard exists, so
+  // redirecting elsewhere would loop into a blank page).
   if (requireRole === 'admin' && role !== 'admin') {
-    return <Navigate to="/dashboard" replace />;
+    return <Navigate to="/login" replace />;
   }
 
   return <>{children}</>;
