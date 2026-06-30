@@ -74,16 +74,6 @@ export default function Home() {
           '-=0.45',
         );
 
-        // Cascading carriers
-        gsap.from('[data-carrier]', {
-          y: 18,
-          autoAlpha: 0,
-          stagger: 0.1,
-          duration: 0.6,
-          ease: 'power2.out',
-          scrollTrigger: { trigger: '[data-carriers]', start: 'top 88%' },
-        });
-
         // Generic scroll reveals
         gsap.utils.toArray<HTMLElement>('[data-reveal]').forEach((el) => {
           gsap.from(el, {
@@ -184,27 +174,32 @@ export default function Home() {
         </AuroraBackground>
       </section>
 
-      {/* ===== CARRIER TRUST BAR — cascading ===== */}
-      <section data-carriers className="border-y border-brand-steel bg-brand-charcoal/50">
-        <div className="container-content flex flex-col items-center gap-6 py-8 lg:flex-row lg:justify-between">
-          <p
-            data-carrier
-            className="text-sm font-medium uppercase tracking-ultra text-brand-chrome"
-          >
+      {/* ===== CARRIER TRUST BAR — endless marquee, feathered edges ===== */}
+      <section data-reveal className="border-y border-brand-steel bg-brand-charcoal/50">
+        <div className="container-content flex flex-col gap-5 py-8 lg:flex-row lg:items-center lg:gap-10">
+          <p className="shrink-0 text-center text-sm font-medium uppercase tracking-ultra text-brand-chrome lg:text-left">
             Comparing plans across
           </p>
-          <ul className="flex flex-wrap items-center justify-center gap-x-8 gap-y-4 sm:gap-x-10 lg:gap-x-12">
-            {CARRIERS.map((c) => (
-              <li key={c.name} data-carrier className="flex h-9 w-24 items-center justify-center sm:w-28">
-                <img
-                  src={asset(c.src)}
-                  alt={`${c.name} logo`}
-                  loading="lazy"
-                  className="max-h-7 max-w-full object-contain opacity-80 transition-opacity duration-200 hover:opacity-100 sm:max-h-8"
-                />
-              </li>
-            ))}
-          </ul>
+          {/* Track is the carrier list duplicated once; the CSS animation scrolls it by
+              exactly one set width for a seamless, endless loop. Edges fade via mask. */}
+          <div className="marquee w-full">
+            <ul className="marquee-track flex w-max items-center">
+              {[...CARRIERS, ...CARRIERS].map((c, i) => (
+                <li
+                  key={`${c.name}-${i}`}
+                  aria-hidden={i >= CARRIERS.length}
+                  className="mr-12 flex h-9 w-24 shrink-0 items-center justify-center sm:mr-16 sm:w-28"
+                >
+                  <img
+                    src={asset(c.src)}
+                    alt={`${c.name} logo`}
+                    loading="lazy"
+                    className="max-h-7 max-w-full object-contain opacity-80 transition-opacity duration-200 hover:opacity-100 sm:max-h-8"
+                  />
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
       </section>
 

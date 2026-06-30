@@ -11,12 +11,40 @@ const HIDE_CHAT_ON = ['/admin', '/login', '/signup', '/dashboard'];
 export function AppLayout() {
   const location = useLocation();
 
-  // Always land at the top on navigation. If the URL has a hash, defer to the
-  // browser's in-page anchor scroll instead.
+  // Land at the top on a route change; on a hash (direct load or in-app), smooth-scroll
+  // to that section once it has rendered.
   useEffect(() => {
-    if (location.hash) return;
+    if (location.hash) {
+      const id = decodeURIComponent(location.hash.slice(1));
+      requestAnimationFrame(() => {
+        document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+      return;
+    }
     window.scrollTo(0, 0);
   }, [location.pathname, location.hash]);
+
+  // BrowserRouter doesn't fire native fragment scrolling for raw "#anchor" links, so the
+  // in-page CTAs (header nav, hero buttons, coverage rows, final CTA) updated the URL but
+  // never moved the page. Delegate every same-page hash link to a reliable smooth
+  // scrollIntoView — it respects each target's scroll-margin-top, so the fixed header
+  // never overlaps the heading it lands on.
+  useEffect(() => {
+    const onClick = (e: MouseEvent) => {
+      if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey) return;
+      const a = (e.target as HTMLElement).closest('a[href^="#"]') as HTMLAnchorElement | null;
+      if (!a) return;
+      const id = decodeURIComponent((a.getAttribute('href') || '').slice(1));
+      if (!id) return;
+      const el = document.getElementById(id);
+      if (!el) return;
+      e.preventDefault();
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      window.history.replaceState(null, '', `#${id}`);
+    };
+    document.addEventListener('click', onClick);
+    return () => document.removeEventListener('click', onClick);
+  }, []);
 
   return (
     <div className="flex min-h-screen flex-col overflow-x-clip bg-brand-black">

@@ -282,3 +282,40 @@
     opacity: 1;
   }
 }
+
+/* Endless carrier marquee — the track is the carrier list duplicated once and scrolled
+   left by exactly one set width, so it loops seamlessly. Both edges feather into the bar
+   via a gradient mask (logos dissolve at the ends). Pauses on hover. */
+@keyframes carrier-marquee {
+  from { transform: translate3d(0, 0, 0); }
+  to   { transform: translate3d(-50%, 0, 0); }
+}
+.marquee {
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 7%, #000 93%, transparent);
+          mask-image: linear-gradient(to right, transparent, #000 7%, #000 93%, transparent);
+}
+.marquee-track {
+  animation: carrier-marquee 34s linear infinite;
+  will-change: transform;
+}
+.marquee:hover .marquee-track {
+  animation-play-state: paused;
+}
+@media (prefers-reduced-motion: reduce) {
+  .marquee {
+    -webkit-mask-image: none;
+            mask-image: none;
+  }
+  .marquee-track {
+    animation: none;
+    flex-wrap: wrap;
+    justify-content: center;
+    width: 100%;
+    row-gap: 1rem;
+  }
+  /* Show a single static set when motion is reduced (hide the duplicated half). */
+  .marquee-track > [aria-hidden='true'] {
+    display: none;
+  }
+}
