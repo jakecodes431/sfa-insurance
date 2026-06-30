@@ -211,6 +211,14 @@ export const MessageIcon = (props: IconProps) => (
   </svg>
 );
 
+/** Envelope — email channel. */
+export const MailIcon = (props: IconProps) => (
+  <svg {...base(props)}>
+    <rect x="3" y="5" width="18" height="14" rx="2" />
+    <path d="M3.5 7l8.5 6 8.5-6" />
+  </svg>
+);
+
 /** Calendar — scheduling / book a time. */
 export const CalendarIcon = (props: IconProps) => (
   <svg {...base(props)}>

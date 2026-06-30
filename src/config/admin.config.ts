@@ -19,7 +19,8 @@ export type AdminModule =
   | 'reviews'
   | 'orders'
   | 'content'
-  | 'payments';
+  | 'payments'
+  | 'automations';
 
 /** Every generic module — convenience for tenants that want the full core kit. */
 export const ALL_ADMIN_MODULES: AdminModule[] = [
@@ -39,4 +40,10 @@ export const ALL_ADMIN_MODULES: AdminModule[] = [
  * and reviews. No payments/invoices/orders — SFA never charges the consumer (carriers
  * process enrollments + commission).
  */
-export const SFA_ADMIN_MODULES: AdminModule[] = ['overview', 'leads', 'bookings', 'reviews'];
+export const SFA_ADMIN_MODULES: AdminModule[] = [
+  'overview',
+  'leads',
+  'bookings',
+  'reviews',
+  'automations',
+];

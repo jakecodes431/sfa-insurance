@@ -400,6 +400,7 @@ export const en = {
       orders: 'Orders',
       content: 'Site Content',
       payments: 'Payments',
+      automations: 'Automations',
     },
     leads: {
       heading: 'Leads',
