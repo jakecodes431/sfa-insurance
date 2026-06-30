@@ -530,10 +530,11 @@ export const en = {
   leadStatus: {
     new: 'New',
     contacted: 'Contacted',
-    qualified: 'Qualified',
-    booked: 'Appointment set',
+    appointment_set: 'Appointment Set',
+    quoted: 'Quoted',
+    application_submitted: 'Application Submitted',
     enrolled: 'Enrolled',
-    closed_lost: 'Closed',
+    not_a_fit: 'Not a Fit',
   },
 
   productLine: {

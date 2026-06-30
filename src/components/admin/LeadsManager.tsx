@@ -12,10 +12,11 @@ import type { LeadRow, LeadStatus, ProductLineDb } from '@/types/database.types'
 const STATUSES: LeadStatus[] = [
   'new',
   'contacted',
-  'qualified',
-  'booked',
+  'appointment_set',
+  'quoted',
+  'application_submitted',
   'enrolled',
-  'closed_lost',
+  'not_a_fit',
 ];
 const PRODUCTS: ProductLineDb[] = [
   'medicare',
@@ -140,7 +141,7 @@ export function LeadsManager() {
                   </div>
                   <div className="shrink-0">
                     <Select
-                      className="w-40"
+                      className="w-48"
                       aria-label={t('admin.leads.setStatus')}
                       value={l.status}
                       onChange={(v) => changeStatus(l, v as LeadStatus)}

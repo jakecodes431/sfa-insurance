@@ -12,7 +12,15 @@ import { getServiceBySlug } from '@/config/services.config';
 import { ListStatus } from '@/components/admin/ui/primitives';
 import type { LeadRow, BookingRow, ReviewRow, LeadStatus } from '@/types/database.types';
 
-const PIPELINE: LeadStatus[] = ['new', 'contacted', 'qualified', 'booked', 'enrolled', 'closed_lost'];
+const PIPELINE: LeadStatus[] = [
+  'new',
+  'contacted',
+  'appointment_set',
+  'quoted',
+  'application_submitted',
+  'enrolled',
+  'not_a_fit',
+];
 const WEEK_MS = 7 * 24 * 60 * 60 * 1000;
 
 interface Bundle {
@@ -105,7 +113,7 @@ export function OverviewDashboard() {
           <ul className="mt-4 space-y-3">
             {byStatus.map(({ status, n }) => (
               <li key={status} className="flex items-center gap-3">
-                <span className="w-24 shrink-0 text-sm text-brand-chrome">
+                <span className="w-32 shrink-0 text-xs leading-tight text-brand-chrome sm:text-sm">
                   {t(`leadStatus.${status}`)}
                 </span>
                 <div className="h-2 flex-1 overflow-hidden rounded-full bg-brand-black/40">

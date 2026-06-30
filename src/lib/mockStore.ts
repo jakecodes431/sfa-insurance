@@ -20,7 +20,7 @@ import type {
   InvoiceLineItemRow,
 } from '@/types/database.types';
 
-const KEY = 'sfp.mockStore.v2';
+const KEY = 'sfp.mockStore.v3';
 
 interface MockDb {
   leads: LeadRow[];
@@ -122,7 +122,7 @@ function seedLeads(tenantId: string): LeadRow[] {
       message: 'Final expense for my mother, fixed budget.',
       best_time: 'evening',
       source: 'website-form',
-      status: 'qualified',
+      status: 'appointment_set',
       created_at: '2026-06-26T15:22:00.000Z',
       updated_at: '2026-06-27T13:10:00.000Z',
     },
@@ -137,7 +137,7 @@ function seedLeads(tenantId: string): LeadRow[] {
       message: 'Turning 65 next month and need help choosing a Medicare plan.',
       best_time: 'anytime',
       source: 'website-form',
-      status: 'booked',
+      status: 'enrolled',
       created_at: '2026-06-25T16:02:00.000Z',
       updated_at: '2026-06-26T09:30:00.000Z',
     },

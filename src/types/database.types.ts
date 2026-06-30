@@ -33,13 +33,17 @@ export type ProductLineDb =
   | 'general';
 
 /** SFA Insurance: lifecycle of a captured lead through the agency pipeline. */
+/** SFA Insurance: the Medicare-agency lead funnel. Maps from a GoHighLevel opportunity
+ *  pipeline (New Lead → Contacted → Appointment → Quoted → Application → Enrolled / Lost).
+ *  See Notes/Work/ForgeIT Solutions/SFA Insurance Group/GHL-MIGRATION.md for the mapping. */
 export type LeadStatus =
   | 'new'
   | 'contacted'
-  | 'qualified'
-  | 'booked'
+  | 'appointment_set'
+  | 'quoted'
+  | 'application_submitted'
   | 'enrolled'
-  | 'closed_lost';
+  | 'not_a_fit';
 
 /** Consumer's preferred call-back window. */
 export type CallWindow = 'anytime' | 'morning' | 'afternoon' | 'evening';

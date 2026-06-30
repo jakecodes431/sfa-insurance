@@ -528,10 +528,11 @@ export const es: TranslationDict = {
   leadStatus: {
     new: 'Nuevo',
     contacted: 'Contactado',
-    qualified: 'Calificado',
-    booked: 'Cita agendada',
+    appointment_set: 'Cita Agendada',
+    quoted: 'Cotizado',
+    application_submitted: 'Solicitud Enviada',
     enrolled: 'Inscrito',
-    closed_lost: 'Cerrado',
+    not_a_fit: 'No Califica',
   },
 
   productLine: {
