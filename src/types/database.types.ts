@@ -1058,6 +1058,45 @@ export interface Database {
         Update: Partial<Database['public']['Tables']['sfp_reviews']['Insert']>;
         Relationships: [];
       };
+      // SFA Insurance lead capture (org-scoped, RLS by sfp_user_org_code()).
+      sfp_ins_leads: {
+        Row: {
+          id: string;
+          organization_code: string;
+          name: string;
+          email: string;
+          phone: string | null;
+          zip: string | null;
+          product_line: string;
+          best_time: string | null;
+          message: string | null;
+          consent_contact: boolean;
+          status: string;
+          source: string;
+          locale: string;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          organization_code: string;
+          name: string;
+          email: string;
+          phone?: string | null;
+          zip?: string | null;
+          product_line?: string;
+          best_time?: string | null;
+          message?: string | null;
+          consent_contact?: boolean;
+          status?: string;
+          source?: string;
+          locale?: string;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: Partial<Database['public']['Tables']['sfp_ins_leads']['Insert']>;
+        Relationships: [];
+      };
     };
     Views: Record<string, never>;
     Functions: {
@@ -1136,6 +1175,21 @@ export interface Database {
         };
         Returns: string;
       };
+      sfp_public_create_ins_lead: {
+        Args: {
+          p_org: string;
+          p_name: string;
+          p_email: string;
+          p_phone?: string | null;
+          p_zip?: string | null;
+          p_product_line?: string;
+          p_best_time?: string | null;
+          p_message?: string | null;
+          p_consent_contact?: boolean;
+          p_locale?: string;
+        };
+        Returns: string;
+      };
       sfp_public_tire_content: { Args: { p_org: string }; Returns: Record<string, string | null> };
       sfp_public_vehicle_catalog: {
         Args: { p_org: string };
@@ -1185,6 +1239,8 @@ export type InvoiceLineItemRow = Database['public']['Tables']['invoice_line_item
 export type InvoiceLineItemInsert = Database['public']['Tables']['invoice_line_items']['Insert'];
 
 // Shared SFP backend aliases.
+export type SfpInsLeadRow = Database['public']['Tables']['sfp_ins_leads']['Row'];
+export type SfpInsLeadInsert = Database['public']['Tables']['sfp_ins_leads']['Insert'];
 export type SfpTireInventoryRow = Database['public']['Tables']['sfp_tire_inventory']['Row'];
 export type SfpTireInventoryInsert =
   Database['public']['Tables']['sfp_tire_inventory']['Insert'];

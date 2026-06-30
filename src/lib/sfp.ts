@@ -38,6 +38,8 @@ import type {
   SfpTireContentBlockInsert,
   LeadRow,
   LeadInsert,
+  SfpInsLeadRow,
+  SfpInsLeadInsert,
 } from '@/types/database.types';
 
 /** The SFP tables/RPCs live on the same client (their types are part of Database). */
@@ -634,21 +636,94 @@ export async function uploadImage(category: string, file: File): Promise<string>
 }
 
 // --------------------------------------------------------------- leads (SFA Insurance)
-// LIVE PATH — not yet wired. The shared SFP backend needs an `sfp_leads` table + RPCs
-// (org-scoped, RLS) and a regenerated database.types.ts before these can run. They are
-// only reached when MOCK_MODE is false (real Supabase creds). Until then the demo runs
-// entirely on the mock store. See context/WIRE-UP-CHECKLIST.md.
-const LEADS_NOT_WIRED =
-  'SFA leads backend not wired yet: add sfp_leads table + RPCs and regenerate types (see WIRE-UP-CHECKLIST).';
+// LIVE PATH — backed by sfp_ins_leads (org-scoped, RLS) and the anon-safe
+// sfp_public_create_ins_lead RPC on the shared SFP backend. Reached only when MOCK_MODE
+// is false (real Supabase creds); otherwise the demo runs on the mock store.
 
-export async function createLead(_input: LeadInsert): Promise<LeadRow> {
-  throw new Error(LEADS_NOT_WIRED);
+/** SFP sfp_ins_leads row → internal LeadRow (organization_code ↔ tenant_id). */
+function leadFromTable(r: SfpInsLeadRow): LeadRow {
+  return {
+    id: r.id,
+    tenant_id: r.organization_code,
+    profile_id: null,
+    name: r.name,
+    email: r.email,
+    phone: r.phone,
+    zip: r.zip,
+    product_line: r.product_line as LeadRow['product_line'],
+    message: r.message,
+    best_time: (r.best_time ?? 'anytime') as LeadRow['best_time'],
+    consent_contact: r.consent_contact,
+    source: r.source,
+    status: r.status as LeadRow['status'],
+    locale: (r.locale ?? 'en') as LeadRow['locale'],
+    created_at: r.created_at,
+    updated_at: r.updated_at,
+  };
 }
 
+/** Public lead capture through the anon-safe RPC; returns the materialized row. */
+export async function createLead(input: LeadInsert): Promise<LeadRow> {
+  const { data: id, error } = await sfp.rpc('sfp_public_create_ins_lead', {
+    p_org: orgCode(),
+    p_name: input.name,
+    p_email: input.email ?? '',
+    p_phone: input.phone ?? null,
+    p_zip: input.zip ?? null,
+    p_product_line: input.product_line ?? 'medicare',
+    p_best_time: input.best_time ?? null,
+    p_message: input.message ?? null,
+    p_consent_contact: input.consent_contact ?? false,
+    p_locale: input.locale ?? 'en',
+  });
+  if (error) throw new Error(error.message);
+  return {
+    id: id as string,
+    tenant_id: orgCode(),
+    profile_id: null,
+    name: input.name,
+    email: input.email ?? null,
+    phone: input.phone ?? null,
+    zip: input.zip ?? null,
+    product_line: input.product_line,
+    message: input.message ?? null,
+    best_time: input.best_time ?? 'anytime',
+    consent_contact: input.consent_contact ?? false,
+    source: input.source ?? 'website',
+    status: input.status ?? 'new',
+    locale: input.locale ?? 'en',
+    created_at: '',
+    updated_at: '',
+  };
+}
+
+/** All leads for the org (staff; RLS-scoped to the signed-in admin's tenant). */
 export async function listLeads(): Promise<LeadRow[]> {
-  throw new Error(LEADS_NOT_WIRED);
+  const { data, error } = await sfp
+    .from('sfp_ins_leads')
+    .select('*')
+    .eq('organization_code', orgCode())
+    .order('created_at', { ascending: false });
+  if (error) throw new Error(error.message);
+  return (data ?? []).map(leadFromTable);
 }
 
-export async function updateLead(_id: string, _patch: Partial<LeadInsert>): Promise<void> {
-  throw new Error(LEADS_NOT_WIRED);
+/** Staff edit (e.g. pipeline status). tenant_id is not writable through this path. */
+export async function updateLead(id: string, patch: Partial<LeadInsert>): Promise<void> {
+  const row: Partial<SfpInsLeadInsert> = {};
+  if (patch.status !== undefined) row.status = patch.status;
+  if (patch.name !== undefined) row.name = patch.name;
+  if (patch.email != null) row.email = patch.email;
+  if (patch.phone !== undefined) row.phone = patch.phone;
+  if (patch.zip !== undefined) row.zip = patch.zip;
+  if (patch.product_line !== undefined) row.product_line = patch.product_line;
+  if (patch.best_time !== undefined) row.best_time = patch.best_time;
+  if (patch.message !== undefined) row.message = patch.message;
+  if (patch.consent_contact !== undefined) row.consent_contact = patch.consent_contact;
+  const { error } = await sfp
+    .from('sfp_ins_leads')
+    .update(row)
+    .eq('id', id)
+    .eq('organization_code', orgCode());
+  if (error) throw new Error(error.message);
 }
