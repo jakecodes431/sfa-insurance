@@ -7,7 +7,7 @@ import { Seo } from '@/components/seo/Seo';
 import { StarRating } from '@/components/ui/StarRating';
 import { LeadCaptureForm } from '@/components/forms/LeadCaptureForm';
 import { PhoneIcon, ArrowRightIcon, CalendarIcon } from '@/components/ui/Icons';
-import { ScheduleDialog, CallDialog } from '@/components/scheduling/SpecialistDialogs';
+import { useScheduling } from '@/components/scheduling/SchedulingProvider';
 import { AuroraBackground } from '@/components/ui/aurora-background';
 import { getFeaturedReviews } from '@/lib/data';
 import { useContent } from '@/lib/content';
@@ -90,7 +90,7 @@ export default function Home() {
     return () => ctx.revert();
   }, []);
 
-  const [dialog, setDialog] = useState<null | 'schedule' | 'call'>(null);
+  const { openSchedule, openCall } = useScheduling();
   const phoneHref = `tel:${businessConfig.phoneE164}`;
 
   return (
@@ -131,11 +131,11 @@ export default function Home() {
             </p>
 
             <div data-hero-el className="mt-7 flex flex-col gap-3 sm:flex-row sm:items-center">
-              <button type="button" onClick={() => setDialog('schedule')} className="btn-primary">
+              <button type="button" onClick={openSchedule} className="btn-primary">
                 <CalendarIcon className="text-lg" />
                 Speak With a Specialist
               </button>
-              <button type="button" onClick={() => setDialog('call')} className="btn-secondary">
+              <button type="button" onClick={openCall} className="btn-secondary">
                 <PhoneIcon className="text-lg" />
                 Call Us
               </button>
@@ -352,18 +352,6 @@ export default function Home() {
           </div>
         </div>
       </section>
-
-      {/* Hero CTA popups: book a specialist (Cal) + click-to-call. */}
-      <ScheduleDialog
-        open={dialog === 'schedule'}
-        onClose={() => setDialog(null)}
-        onCall={() => setDialog('call')}
-      />
-      <CallDialog
-        open={dialog === 'call'}
-        onClose={() => setDialog(null)}
-        onSchedule={() => setDialog('schedule')}
-      />
     </div>
   );
 }

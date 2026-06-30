@@ -5,6 +5,7 @@ import { businessConfig } from '@/config/business.config';
 import { PhoneIcon } from '@/components/ui/Icons';
 import { cn } from '@/lib/cn';
 import { asset } from '@/lib/asset';
+import { useScheduling } from '@/components/scheduling/SchedulingProvider';
 
 // Single-page landing: nav anchors to sections, not separate pages. No auth, no
 // language toggle, no admin link.
@@ -17,6 +18,7 @@ const navLinkClass = 'text-sm font-medium tracking-tight text-brand-chrome trans
 
 export function Header() {
   const { t } = useTranslation();
+  const { openSchedule } = useScheduling();
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const headerRef = useRef<HTMLElement>(null);
@@ -72,9 +74,13 @@ export function Header() {
             <PhoneIcon className="text-base text-brand-red" />
             {businessConfig.phone}
           </a>
-          <a href="#quote" className="btn-primary !py-2.5 !text-sm">
+          <button
+            type="button"
+            onClick={openSchedule}
+            className="btn-primary !py-2.5 !text-sm"
+          >
             {t('nav.book')}
-          </a>
+          </button>
         </div>
 
         {/* Mobile toggle */}
@@ -125,9 +131,16 @@ export function Header() {
               <PhoneIcon className="text-base text-brand-red" />
               {businessConfig.phone}
             </a>
-            <a href="#quote" className="btn-primary mt-2 w-full" onClick={() => setOpen(false)}>
+            <button
+              type="button"
+              className="btn-primary mt-2 w-full"
+              onClick={() => {
+                setOpen(false);
+                openSchedule();
+              }}
+            >
               {t('nav.book')}
-            </a>
+            </button>
           </nav>
         </div>
       )}

@@ -3,6 +3,7 @@ import { Outlet, useLocation } from 'react-router-dom';
 import { Header } from './Header';
 import { Footer } from './Footer';
 import { ChatWidget } from '@/components/chat/ChatWidget';
+import { SchedulingProvider } from '@/components/scheduling/SchedulingProvider';
 
 /** Internal pages where the public chat assistant should not appear. */
 const HIDE_CHAT_ON = ['/admin', '/login', '/signup', '/dashboard'];
@@ -47,6 +48,7 @@ export function AppLayout() {
   }, []);
 
   return (
+    <SchedulingProvider>
     <div className="flex min-h-screen flex-col overflow-x-clip bg-brand-black">
       <Header />
       {/* Header is fixed (transparent overlay) → pad content down to clear it. The home
@@ -65,5 +67,6 @@ export function AppLayout() {
       <Footer />
       {!HIDE_CHAT_ON.some((p) => location.pathname.startsWith(p)) && <ChatWidget />}
     </div>
+    </SchedulingProvider>
   );
 }
