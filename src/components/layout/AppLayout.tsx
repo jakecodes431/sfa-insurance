@@ -4,6 +4,7 @@ import { Header } from './Header';
 import { Footer } from './Footer';
 import { ChatWidget } from '@/components/chat/ChatWidget';
 import { SchedulingProvider } from '@/components/scheduling/SchedulingProvider';
+import { AdminHeader } from '@/components/admin/AdminHeader';
 
 /** Internal pages where the public chat assistant should not appear. */
 const HIDE_CHAT_ON = ['/admin', '/login', '/signup', '/dashboard'];
@@ -46,6 +47,23 @@ export function AppLayout() {
     document.addEventListener('click', onClick);
     return () => document.removeEventListener('click', onClick);
   }, []);
+
+  // Admin gets its own back-office chrome: a branded admin header (with the tabs as nav)
+  // instead of the public marketing header, and no public footer / chat widget.
+  if (location.pathname.startsWith('/admin')) {
+    return (
+      <div className="flex min-h-screen flex-col bg-brand-black">
+        <AdminHeader />
+        <main className="flex-1">
+          <Suspense fallback={<div className="min-h-[60vh] bg-brand-black" />}>
+            <div key={location.pathname} className="animate-page-in">
+              <Outlet />
+            </div>
+          </Suspense>
+        </main>
+      </div>
+    );
+  }
 
   return (
     <SchedulingProvider>
