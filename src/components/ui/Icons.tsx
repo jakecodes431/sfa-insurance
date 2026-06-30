@@ -211,6 +211,14 @@ export const MessageIcon = (props: IconProps) => (
   </svg>
 );
 
+/** Calendar — scheduling / book a time. */
+export const CalendarIcon = (props: IconProps) => (
+  <svg {...base(props)}>
+    <rect x="3" y="5" width="18" height="16" rx="2" />
+    <path d="M3 9.5h18M8 3v4M16 3v4" />
+  </svg>
+);
+
 /** Person — account / login. */
 export const UserIcon = (props: IconProps) => (
   <svg {...base(props)}>

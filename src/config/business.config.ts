@@ -93,6 +93,19 @@ export const businessConfig = {
     value: 4.9, // shown on sfainsure.com
     count: 0, // PLACEHOLDER — live count via reviews
   },
+
+  /**
+   * Scheduling — self-hosted Cal.com (cal.diy) at calendar.serviceflowpro.co. Booking is a
+   * MANUAL per-client event type on that instance (the fork can't auto-provision). Paste the
+   * SFA booking link into `calUrl` once the event type exists; until then the schedule dialog
+   * shows a call-to-book fallback. Replaces the client's current Calendly embed.
+   */
+  scheduling: {
+    provider: 'cal',
+    // e.g. 'https://calendar.serviceflowpro.co/sfa-insurance/medicare-consult'
+    calUrl: '',
+    hoursLabel: 'Mon-Fri, 9 AM to 5 PM EST',
+  },
 } as const;
 
 export type BusinessConfig = typeof businessConfig;

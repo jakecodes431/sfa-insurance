@@ -6,7 +6,8 @@ import { useLocalizedService } from '@/hooks/useLocalizedService';
 import { Seo } from '@/components/seo/Seo';
 import { StarRating } from '@/components/ui/StarRating';
 import { LeadCaptureForm } from '@/components/forms/LeadCaptureForm';
-import { PhoneIcon, ArrowRightIcon } from '@/components/ui/Icons';
+import { PhoneIcon, ArrowRightIcon, CalendarIcon } from '@/components/ui/Icons';
+import { ScheduleDialog, CallDialog } from '@/components/scheduling/SpecialistDialogs';
 import { AuroraBackground } from '@/components/ui/aurora-background';
 import { getFeaturedReviews } from '@/lib/data';
 import { useContent } from '@/lib/content';
@@ -89,6 +90,7 @@ export default function Home() {
     return () => ctx.revert();
   }, []);
 
+  const [dialog, setDialog] = useState<null | 'schedule' | 'call'>(null);
   const phoneHref = `tel:${businessConfig.phoneE164}`;
 
   return (
@@ -129,13 +131,22 @@ export default function Home() {
             </p>
 
             <div data-hero-el className="mt-7 flex flex-col gap-3 sm:flex-row sm:items-center">
-              <a href={phoneHref} className="btn-primary">
+              <button
+                type="button"
+                onClick={() => setDialog('schedule')}
+                className="btn-primary !rounded-2xl text-center leading-snug"
+              >
+                <CalendarIcon className="shrink-0 text-lg" />
+                Speak With a Licensed Medicare Specialist
+              </button>
+              <button
+                type="button"
+                onClick={() => setDialog('call')}
+                className="btn-secondary !rounded-2xl"
+              >
                 <PhoneIcon className="text-lg" />
-                {t('nav.book')}
-              </a>
-              <a href="#quote" className="btn-secondary">
-                {t('home.freeCalloutTitle')}
-              </a>
+                Call {businessConfig.phone}
+              </button>
             </div>
 
             <div data-hero-el className="mt-7 flex flex-wrap items-center gap-x-8 gap-y-4">
@@ -349,6 +360,18 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* Hero CTA popups: book a specialist (Cal) + click-to-call. */}
+      <ScheduleDialog
+        open={dialog === 'schedule'}
+        onClose={() => setDialog(null)}
+        onCall={() => setDialog('call')}
+      />
+      <CallDialog
+        open={dialog === 'call'}
+        onClose={() => setDialog(null)}
+        onSchedule={() => setDialog('schedule')}
+      />
     </div>
   );
 }
