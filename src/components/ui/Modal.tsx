@@ -49,7 +49,7 @@ export function Modal({ open, onClose, labelledBy, size = 'max-w-lg', children }
         role="dialog"
         aria-modal="true"
         aria-labelledby={labelledBy}
-        className={`animate-fade-up relative z-10 my-auto w-full ${size} rounded-2xl border border-brand-steel bg-brand-charcoal text-brand-white shadow-2xl outline-none`}
+        className={`animate-fade-up relative z-10 w-full ${size} rounded-2xl border border-brand-steel bg-brand-charcoal text-brand-white shadow-2xl outline-none`}
       >
         <button
           type="button"

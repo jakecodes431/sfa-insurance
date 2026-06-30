@@ -67,26 +67,27 @@ export function ScheduleDialog({ open, onClose, onCall }: DialogProps & { onCall
   const { calUrl } = businessConfig.scheduling;
 
   return (
-    <Modal open={open} onClose={onClose} labelledBy="schedule-title" size="max-w-2xl">
-      <div className="px-6 pb-6 pt-8 sm:px-8">
+    <Modal open={open} onClose={onClose} labelledBy="schedule-title" size="max-w-3xl">
+      {/* Capped to the dynamic viewport so the popup always fits on any screen. */}
+      <div className="max-h-[calc(100dvh-3rem)] overflow-y-auto px-4 pb-4 pt-6 sm:px-7 sm:pb-6">
         <h2
           id="schedule-title"
-          className="pr-8 font-display text-2xl font-bold leading-tight text-brand-white sm:text-[1.75rem]"
+          className="pr-8 font-display text-xl font-bold leading-tight text-brand-white sm:text-[1.75rem]"
         >
           Speak With a Licensed Medicare Specialist
         </h2>
-        <p className="mt-2 text-sm leading-relaxed text-brand-chrome sm:text-base">
+        <p className="mt-1.5 text-sm leading-relaxed text-brand-chrome">
           Pick a time that works for you and a licensed agent will call to review your plan. No
           cost, no pressure.
         </p>
 
-        <div className="mt-5">
+        <div className="mt-3">
           {calUrl ? (
             <iframe
               src={calUrl}
               title="Schedule a call with a licensed Medicare specialist"
               loading="lazy"
-              className="h-[58vh] min-h-[420px] w-full rounded-xl border border-brand-steel"
+              className="h-[clamp(260px,calc(100dvh-23rem),540px)] w-full rounded-xl border border-brand-steel"
             />
           ) : (
             <div className="flex flex-col items-center rounded-xl border border-dashed border-brand-steel bg-brand-black/50 px-6 py-10 text-center">
@@ -108,22 +109,24 @@ export function ScheduleDialog({ open, onClose, onCall }: DialogProps & { onCall
           )}
         </div>
 
-        {/* Reciprocal hand-off: prefer a call instead of picking a time. */}
-        {calUrl && (
-          <div className="mt-4 text-center">
-            <button
-              type="button"
-              onClick={onCall}
-              className="group inline-flex items-center gap-2 text-sm font-semibold text-brand-white transition-colors hover:text-brand-red"
-            >
-              <PhoneIcon className="text-base" />
-              Prefer to talk now? Call {businessConfig.phone}
-            </button>
-          </div>
-        )}
+        <div className="shrink-0">
+          {/* Reciprocal hand-off: prefer a call instead of picking a time. */}
+          {calUrl && (
+            <div className="mt-3 text-center">
+              <button
+                type="button"
+                onClick={onCall}
+                className="group inline-flex min-h-[44px] items-center gap-2 text-sm font-semibold text-brand-white transition-colors hover:text-brand-red"
+              >
+                <PhoneIcon className="text-base" />
+                Prefer to talk now? Call {businessConfig.phone}
+              </button>
+            </div>
+          )}
 
-        <TrustStrip />
-        <Disclaimer />
+          <TrustStrip />
+          <Disclaimer />
+        </div>
       </div>
     </Modal>
   );
