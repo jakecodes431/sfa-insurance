@@ -9,8 +9,11 @@ import { useScheduling } from '@/components/scheduling/SchedulingProvider';
 
 // Single-page landing: nav anchors to sections, not separate pages. No auth, no
 // language toggle, no admin link.
+// In natural page order so the nav mirrors how the landing page reads top to bottom.
 const NAV_ITEMS = [
+  { href: '#how-it-works', label: 'How It Works' },
   { href: '#coverage', label: 'Plans' },
+  { href: '#why-us', label: 'Why Us' },
   { href: '#reviews', label: 'Reviews' },
   { href: '#faq', label: 'FAQ' },
 ];

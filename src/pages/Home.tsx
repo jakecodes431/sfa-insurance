@@ -209,7 +209,7 @@ export default function Home() {
       </section>
 
       {/* ===== HOW IT WORKS — airy columns (no boxed grid) ===== */}
-      <section className="container-content py-16 sm:py-28">
+      <section id="how-it-works" className="container-content scroll-mt-24 py-16 sm:py-28">
         <div data-reveal>
           <span className="eyebrow">How it works</span>
           <h2 className="mt-5 max-w-2xl text-3xl text-brand-white sm:text-5xl">
@@ -269,8 +269,8 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ===== REASSURANCE — statement + clean list (no boxed grid) ===== */}
-      <section className="container-content py-16 sm:py-28">
+      {/* ===== WHY US — statement + clean list (no boxed grid) ===== */}
+      <section id="why-us" className="container-content scroll-mt-24 py-16 sm:py-28">
         <div className="grid gap-12 lg:grid-cols-2 lg:gap-20">
           <div data-reveal>
             <span className="eyebrow">{t('home.whyHeading')}</span>
