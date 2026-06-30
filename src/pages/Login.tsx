@@ -1,16 +1,20 @@
 import { useState } from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/lib/auth';
 import { Seo } from '@/components/seo/Seo';
-import { OAuthButtons } from '@/components/auth/OAuthButtons';
 
+/**
+ * Staff sign-in. SFA has no customer accounts (the public site is lead capture + booking),
+ * so /login exists only to reach the admin portal — no guest/booking copy, no social
+ * logins, no public sign-up. Credentials are provisioned by an administrator (sfp_staff).
+ */
 export default function Login() {
   const { t } = useTranslation();
   const { signIn } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const from = (location.state as { from?: string } | null)?.from ?? '/dashboard';
+  const from = (location.state as { from?: string } | null)?.from ?? '/admin';
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -28,10 +32,12 @@ export default function Login() {
   }
 
   return (
-    <section className="container-content max-w-md py-10 sm:py-16">
-      <Seo title={`${t('auth.loginTitle')} — ${t('common.appName')}`} path="/login" />
-      <h1 className="text-3xl text-brand-white">{t('auth.loginTitle')}</h1>
-      <p className="mt-2 text-sm text-brand-chrome">{t('auth.optionalNote')}</p>
+    <section className="container-content max-w-md py-16 sm:py-24">
+      <Seo title={`Staff Sign In — ${t('common.appName')}`} path="/login" />
+      <h1 className="text-3xl text-brand-white">Staff Sign In</h1>
+      <p className="mt-2 text-sm text-brand-chrome">
+        Authorized SFA staff only. Use the credentials provided by your administrator.
+      </p>
 
       <form onSubmit={handleSubmit} className="mt-6 space-y-5">
         <div>
@@ -61,15 +67,6 @@ export default function Login() {
           {t('auth.loginCta')}
         </button>
       </form>
-
-      <OAuthButtons />
-
-      <p className="mt-6 text-sm text-brand-chrome">
-        {t('auth.noAccount')}{' '}
-        <Link to="/signup" className="text-brand-red">
-          {t('auth.signupCta')}
-        </Link>
-      </p>
     </section>
   );
 }

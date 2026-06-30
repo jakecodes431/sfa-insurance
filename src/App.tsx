@@ -8,10 +8,8 @@ import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 
 const Home = lazy(() => import('@/pages/Home'));
 const LegalPage = lazy(() => import('@/pages/LegalPage'));
-const Dashboard = lazy(() => import('@/pages/Dashboard'));
 const Admin = lazy(() => import('@/pages/Admin'));
 const Login = lazy(() => import('@/pages/Login'));
-const Signup = lazy(() => import('@/pages/Signup'));
 const NotFound = lazy(() => import('@/pages/NotFound'));
 
 export function App() {
@@ -35,14 +33,9 @@ export function App() {
                 <Route path="pay" element={<Navigate to="/" replace />} />
                 <Route path="promotions" element={<Navigate to="/" replace />} />
                 <Route path="promotions/:slug" element={<Navigate to="/" replace />} />
-                <Route
-                  path="dashboard"
-                  element={
-                    <ProtectedRoute>
-                      <Dashboard />
-                    </ProtectedRoute>
-                  }
-                />
+                {/* SFA has no customer accounts — these customer-auth routes are orphaned.
+                    /dashboard → admin (gated), /signup → the staff sign-in. */}
+                <Route path="dashboard" element={<Navigate to="/admin" replace />} />
                 <Route
                   path="admin"
                   element={
@@ -52,7 +45,7 @@ export function App() {
                   }
                 />
                 <Route path="login" element={<Login />} />
-                <Route path="signup" element={<Signup />} />
+                <Route path="signup" element={<Navigate to="/login" replace />} />
                 <Route path="*" element={<NotFound />} />
               </Route>
             </Routes>
