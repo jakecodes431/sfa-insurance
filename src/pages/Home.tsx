@@ -131,21 +131,13 @@ export default function Home() {
             </p>
 
             <div data-hero-el className="mt-7 flex flex-col gap-3 sm:flex-row sm:items-center">
-              <button
-                type="button"
-                onClick={() => setDialog('schedule')}
-                className="btn-primary !rounded-2xl text-center leading-snug"
-              >
-                <CalendarIcon className="shrink-0 text-lg" />
-                Speak With a Licensed Medicare Specialist
+              <button type="button" onClick={() => setDialog('schedule')} className="btn-primary">
+                <CalendarIcon className="text-lg" />
+                Speak With a Specialist
               </button>
-              <button
-                type="button"
-                onClick={() => setDialog('call')}
-                className="btn-secondary !rounded-2xl"
-              >
+              <button type="button" onClick={() => setDialog('call')} className="btn-secondary">
                 <PhoneIcon className="text-lg" />
-                Call {businessConfig.phone}
+                Call Us
               </button>
             </div>
 
