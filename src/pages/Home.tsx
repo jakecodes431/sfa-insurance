@@ -123,7 +123,7 @@ export default function Home() {
             <h1
               data-hero-el
               className="display-hero mt-5 text-brand-white"
-              style={{ fontSize: 'clamp(2.4rem, 5.4vw, 4.5rem)' }}
+              style={{ fontSize: 'clamp(2rem, 6.2vw, 4.5rem)' }}
             >
               {heroHeadline}
             </h1>
@@ -208,10 +208,10 @@ export default function Home() {
       </section>
 
       {/* ===== HOW IT WORKS — airy columns (no boxed grid) ===== */}
-      <section className="container-content py-20 sm:py-28">
+      <section className="container-content py-16 sm:py-28">
         <div data-reveal>
           <span className="eyebrow">How it works</span>
-          <h2 className="mt-5 max-w-2xl text-4xl text-brand-white sm:text-5xl">
+          <h2 className="mt-5 max-w-2xl text-3xl text-brand-white sm:text-5xl">
             Real guidance, in three unhurried steps.
           </h2>
         </div>
@@ -229,10 +229,10 @@ export default function Home() {
 
       {/* ===== COVERAGE — editorial index ===== */}
       <section id="coverage" className="scroll-mt-24 border-y border-brand-steel bg-brand-charcoal/50">
-        <div className="container-content py-20 sm:py-28">
+        <div className="container-content py-16 sm:py-28">
           <div data-reveal>
             <span className="eyebrow">{t('home.servicesHeading')}</span>
-            <h2 className="mt-5 max-w-2xl text-4xl text-brand-white sm:text-5xl">
+            <h2 className="mt-5 max-w-2xl text-3xl text-brand-white sm:text-5xl">
               {t('home.servicesSub')}
             </h2>
           </div>
@@ -269,11 +269,11 @@ export default function Home() {
       </section>
 
       {/* ===== REASSURANCE — statement + clean list (no boxed grid) ===== */}
-      <section className="container-content py-20 sm:py-28">
+      <section className="container-content py-16 sm:py-28">
         <div className="grid gap-12 lg:grid-cols-2 lg:gap-20">
           <div data-reveal>
             <span className="eyebrow">{t('home.whyHeading')}</span>
-            <h2 className="mt-5 text-4xl leading-tight text-brand-white sm:text-5xl">
+            <h2 className="mt-5 text-3xl leading-tight text-brand-white sm:text-5xl">
               Our guidance is always free. You only ever pay your plan premium.
             </h2>
             <p className="mt-6 max-w-xl text-lg leading-relaxed text-brand-chrome">
@@ -305,7 +305,7 @@ export default function Home() {
       {/* ===== TESTIMONIALS — pull-quotes ===== */}
       {reviews.length > 0 && (
         <section id="reviews" className="scroll-mt-24 border-t border-brand-steel bg-brand-charcoal/50">
-          <div className="container-content py-20 sm:py-28">
+          <div className="container-content py-16 sm:py-28">
             <div data-reveal>
               <span className="eyebrow">{t('home.reviewsHeading')}</span>
             </div>
@@ -331,9 +331,9 @@ export default function Home() {
 
       {/* ===== FINAL CTA — deep navy band ===== */}
       <section className="bg-brand-white">
-        <div className="container-content grid gap-10 py-20 sm:py-24 lg:grid-cols-[1.3fr_1fr] lg:items-center">
+        <div className="container-content grid gap-10 py-16 sm:py-24 lg:grid-cols-[1.3fr_1fr] lg:items-center">
           <div data-reveal>
-            <h2 className="text-4xl leading-tight text-brand-black sm:text-5xl">
+            <h2 className="text-3xl leading-tight text-brand-black sm:text-5xl">
               {t('home.calloutHeading')}
             </h2>
             <p className="mt-5 max-w-xl text-lg text-brand-black/70">{t('home.calloutSub')}</p>
