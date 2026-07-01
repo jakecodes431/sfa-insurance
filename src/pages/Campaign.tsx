@@ -1,15 +1,15 @@
 /**
  * Campaign — the public landing for a carrier campaign link (/c/:slug). Logs the click for
- * attribution, captures the lead (so SFA owns the data), then shows the carrier's enrollment
- * page in an EMBEDDED window that stays on our /c/:slug URL (embed mode). If the carrier
- * blocks framing (X-Frame-Options), the embed shows blank and the "open in a new tab" link
- * is the fallback. Campaigns with embed=off use the new-tab handoff instead.
+ * attribution, and shows the carrier enrollment window right in the page (staying on our
+ * /c/:slug URL). For the demo the window holds a mock carrier form; the real carrier agent
+ * link (campaign.agent_url) is embedded here once provided. A completed enrollment logs a
+ * capture for attribution.
  */
 import { useEffect, useMemo, useState } from 'react';
 import { useParams, Navigate } from 'react-router-dom';
 import { Seo } from '@/components/seo/Seo';
-import { CheckIcon, ArrowRightIcon } from '@/components/ui/Icons';
-import { createLead, getCampaignBySlug, logCampaignEvent } from '@/lib/data';
+import { CheckIcon } from '@/components/ui/Icons';
+import { getCampaignBySlug, logCampaignEvent } from '@/lib/data';
 import { MockCarrierForm } from '@/components/campaign/MockCarrierForm';
 import { enrollProducts } from '@/config/carriers.config';
 import type { Campaign as CampaignT } from '@/types/campaigns';
@@ -17,13 +17,6 @@ import type { Campaign as CampaignT } from '@/types/campaigns';
 export default function Campaign() {
   const { slug = '' } = useParams();
   const [campaign, setCampaign] = useState<CampaignT | null | undefined>(undefined);
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [phone, setPhone] = useState('');
-  const [zip, setZip] = useState('');
-  const [consent, setConsent] = useState(false);
-  const [busy, setBusy] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
 
   useEffect(() => {
     let active = true;
@@ -47,81 +40,16 @@ export default function Campaign() {
   }
   if (campaign === null) return <Navigate to="/" replace />;
 
-  async function proceed(e: React.FormEvent) {
-    e.preventDefault();
-    if (!consent) return;
-    setBusy(true);
-    try {
-      if (name.trim()) {
-        const lead = await createLead({
-          name: name.trim(),
-          email: email.trim() || null,
-          phone: phone.trim() || null,
-          zip: zip.trim() || null,
-          product_line: campaign!.product_line as 'dental-vision' | 'life-final-expense',
-          best_time: 'anytime',
-          consent_contact: consent,
-          source: `campaign:${campaign!.slug}`,
-          status: 'new',
-        });
-        await logCampaignEvent(campaign!.id, 'capture', lead.id);
-      }
-      setSubmitted(true);
-    } finally {
-      setBusy(false);
-    }
-  }
-
-  const firstName = name.split(' ')[0] || 'there';
-
-  // ---- After capture: embedded carrier window (stays on our URL) ----
-  if (submitted && campaign.embed) {
-    return (
-      <section className="container-content py-8 sm:py-12">
-        <Seo title={`${campaign.carrier} — SFA Insurance Group`} path={`/c/${campaign.slug}`} />
-        <div className="mx-auto max-w-2xl">
-          <div className="flex flex-wrap items-center justify-between gap-3 border-b border-brand-steel pb-3">
-            <p className="text-sm text-brand-chrome">
-              Enrolling with <span className="font-semibold text-brand-white">{campaign.carrier}</span>
-              {product ? ` · ${product.eyebrow}` : ''}
-            </p>
-            <span className="text-xs text-brand-chrome/70">Secured by {campaign.carrier}</span>
-          </div>
-          {/* Demo placeholder for the embedded carrier enrollment window; the real agent
-              link is dropped in via the campaign's agent_url once provided. */}
-          <div className="mt-4 overflow-hidden rounded-xl border border-brand-steel shadow-card">
-            <MockCarrierForm carrier={campaign.carrier} product={product} />
-          </div>
-        </div>
-      </section>
-    );
-  }
-
-  // ---- After capture (non-embed): new-tab handoff ----
-  if (submitted) {
-    return (
-      <section className="container-content max-w-lg py-16 text-center sm:py-24">
-        <Seo title={`${campaign.carrier} — SFA Insurance Group`} path={`/c/${campaign.slug}`} />
-        <h1 className="text-2xl font-bold text-brand-white">You are all set, {firstName}.</h1>
-        <p className="mt-2 text-brand-chrome">
-          Continue to {campaign.carrier} to choose your plan and enroll. A licensed SFA agent is here
-          if you need help.
-        </p>
-        <a href={campaign.agent_url} target="_blank" rel="noreferrer noopener" className="btn-primary mt-6">
-          Open {campaign.carrier} enrollment
-          <ArrowRightIcon className="text-base" />
-        </a>
-      </section>
-    );
-  }
-
-  // ---- Before capture: pitch + capture form ----
   return (
     <section className="container-content py-14 sm:py-20">
-      <Seo title={`${campaign.carrier} ${product?.eyebrow ?? ''} — SFA Insurance Group`} path={`/c/${campaign.slug}`} />
+      <Seo
+        title={`${campaign.carrier} ${product?.eyebrow ?? ''} — SFA Insurance Group`}
+        path={`/c/${campaign.slug}`}
+      />
 
-      <div className="mx-auto grid max-w-5xl gap-10 lg:grid-cols-2 lg:items-center">
-        <div>
+      <div className="mx-auto grid max-w-5xl gap-10 lg:grid-cols-2 lg:items-start">
+        {/* Pitch */}
+        <div className="lg:pt-4">
           <span className="eyebrow">{product?.eyebrow ?? campaign.product_line}</span>
           <h1 className="mt-4 text-3xl font-bold leading-tight text-brand-white sm:text-4xl">
             {product?.headline ?? `Enroll with ${campaign.carrier}`}
@@ -141,26 +69,21 @@ export default function Campaign() {
           )}
         </div>
 
-        <div className="panel-ring !p-6">
-          <h2 className="text-xl font-bold text-brand-white">Get started</h2>
-          <p className="mt-1 text-sm text-brand-chrome">
-            A few quick details and we will take you to {campaign.carrier} to enroll.
-          </p>
-          <form onSubmit={proceed} className="mt-5 space-y-3">
-            <input required value={name} onChange={(e) => setName(e.target.value)} placeholder="Full name" className="input-field" />
-            <div className="grid grid-cols-2 gap-3">
-              <input value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="Phone" className="input-field" />
-              <input value={zip} onChange={(e) => setZip(e.target.value)} placeholder="Zip" className="input-field" />
-            </div>
-            <input value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email" type="email" className="input-field" />
-            <label className="flex items-start gap-2 text-xs leading-relaxed text-brand-chrome">
-              <input type="checkbox" checked={consent} onChange={(e) => setConsent(e.target.checked)} className="mt-0.5 h-4 w-4 shrink-0" />
-              I agree to be contacted by SFA Insurance Group about my coverage options.
-            </label>
-            <button type="submit" disabled={busy || !name.trim() || !consent} className="btn-primary w-full disabled:opacity-40">
-              Continue to {campaign.carrier}
-            </button>
-          </form>
+        {/* Embedded carrier window — the real carrier form goes here once the agent link is set. */}
+        <div>
+          <div className="flex flex-wrap items-center justify-between gap-2 border-b border-brand-steel pb-2">
+            <p className="text-sm text-brand-chrome">
+              Enroll with <span className="font-semibold text-brand-white">{campaign.carrier}</span>
+            </p>
+            <span className="text-xs text-brand-chrome/70">Secured by {campaign.carrier}</span>
+          </div>
+          <div className="mt-3 overflow-hidden rounded-xl border border-brand-steel shadow-card">
+            <MockCarrierForm
+              carrier={campaign.carrier}
+              product={product}
+              onComplete={() => void logCampaignEvent(campaign.id, 'capture')}
+            />
+          </div>
         </div>
       </div>
 

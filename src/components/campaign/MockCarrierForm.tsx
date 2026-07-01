@@ -26,7 +26,15 @@ const PLANS: Record<string, Plan[]> = {
   ],
 };
 
-export function MockCarrierForm({ carrier, product }: { carrier: string; product?: EnrollProduct }) {
+export function MockCarrierForm({
+  carrier,
+  product,
+  onComplete,
+}: {
+  carrier: string;
+  product?: EnrollProduct;
+  onComplete?: () => void;
+}) {
   const plans = PLANS[product?.productLine ?? ''] ?? PLANS['dental-vision'];
   const [plan, setPlan] = useState<number | null>(null);
   const [done, setDone] = useState(false);
@@ -79,7 +87,10 @@ export function MockCarrierForm({ carrier, product }: { carrier: string; product
       <button
         type="button"
         disabled={plan === null}
-        onClick={() => setDone(true)}
+        onClick={() => {
+          setDone(true);
+          onComplete?.();
+        }}
         className="mt-5 w-full rounded-full bg-[#1C5BD6] px-6 py-3 font-semibold text-white transition hover:bg-[#1648AD] disabled:opacity-40"
       >
         Continue to secure checkout
