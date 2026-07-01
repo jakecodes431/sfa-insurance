@@ -399,6 +399,7 @@ export const es: TranslationDict = {
       content: 'Contenido del Sitio',
       payments: 'Pagos',
       automations: 'Automatizaciones',
+      campaigns: 'Campañas',
     },
     leads: {
       heading: 'Prospectos',

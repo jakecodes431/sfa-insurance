@@ -401,6 +401,7 @@ export const en = {
       content: 'Site Content',
       payments: 'Payments',
       automations: 'Automations',
+      campaigns: 'Campaigns',
     },
     leads: {
       heading: 'Leads',

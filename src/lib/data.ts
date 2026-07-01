@@ -24,6 +24,7 @@ import type {
 } from '@/types/database.types';
 import type { LeadNote, LeadActivity, LeadActivityKind } from '@/types/crm';
 import type { Automation } from '@/config/automations.config';
+import type { Campaign, CampaignEventKind } from '@/types/campaigns';
 
 /** Human label for a status value (appointment_set -> "Appointment Set"). */
 function statusLabel(s: LeadStatus): string {
@@ -152,6 +153,70 @@ export async function saveAutomation(updated: Automation): Promise<void> {
     return;
   }
   throw new Error('Automations not wired to the live backend yet.');
+}
+
+// ----------------------------------------------------------------- carrier campaigns
+export async function getCampaigns(): Promise<Campaign[]> {
+  if (MOCK_MODE)
+    return [...mockStore.db().campaigns].sort((a, b) => b.created_at.localeCompare(a.created_at));
+  return []; // live: sfp_ins_campaigns (not wired in the demo)
+}
+
+export async function getCampaignBySlug(slug: string): Promise<Campaign | null> {
+  if (MOCK_MODE) return mockStore.db().campaigns.find((c) => c.slug === slug && c.enabled) ?? null;
+  return null;
+}
+
+export async function saveCampaign(updated: Campaign): Promise<void> {
+  if (MOCK_MODE) {
+    const list = mockStore.db().campaigns;
+    const i = list.findIndex((c) => c.id === updated.id);
+    if (i >= 0) list[i] = updated;
+    else list.unshift(updated);
+    mockStore.save();
+    return;
+  }
+  throw new Error('Campaigns not wired to the live backend yet.');
+}
+
+export async function deleteCampaign(id: string): Promise<void> {
+  if (MOCK_MODE) {
+    const db = mockStore.db();
+    db.campaigns = db.campaigns.filter((c) => c.id !== id);
+    db.campaignEvents = db.campaignEvents.filter((e) => e.campaign_id !== id);
+    mockStore.save();
+    return;
+  }
+  throw new Error('Campaigns not wired to the live backend yet.');
+}
+
+/** Record a click or capture against a campaign (attribution). */
+export async function logCampaignEvent(
+  campaignId: string,
+  kind: CampaignEventKind,
+  leadId?: string,
+): Promise<void> {
+  if (!MOCK_MODE) return;
+  mockStore.db().campaignEvents.push({
+    id: uuid(),
+    campaign_id: campaignId,
+    kind,
+    lead_id: leadId ?? null,
+    created_at: mockStore.nowIso(),
+  });
+  mockStore.save();
+}
+
+/** Per-campaign click + capture counts for the admin. */
+export async function getCampaignStats(): Promise<Record<string, { clicks: number; captures: number }>> {
+  if (!MOCK_MODE) return {};
+  const stats: Record<string, { clicks: number; captures: number }> = {};
+  for (const e of mockStore.db().campaignEvents) {
+    stats[e.campaign_id] ??= { clicks: 0, captures: 0 };
+    if (e.kind === 'click') stats[e.campaign_id].clicks++;
+    else stats[e.campaign_id].captures++;
+  }
+  return stats;
 }
 
 // ----------------------------------------------------------------- reviews

@@ -8,6 +8,7 @@ import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 
 const Home = lazy(() => import('@/pages/Home'));
 const Enroll = lazy(() => import('@/pages/Enroll'));
+const Campaign = lazy(() => import('@/pages/Campaign'));
 const LegalPage = lazy(() => import('@/pages/LegalPage'));
 const Admin = lazy(() => import('@/pages/Admin'));
 const Login = lazy(() => import('@/pages/Login'));
@@ -23,6 +24,7 @@ export function App() {
               <Route element={<AppLayout />}>
                 <Route index element={<Home />} />
                 <Route path="enroll/:product" element={<Enroll />} />
+                <Route path="c/:slug" element={<Campaign />} />
                 <Route path="terms" element={<LegalPage kind="terms" />} />
                 <Route path="privacy" element={<LegalPage kind="privacy" />} />
                 {/* Orphaned starter-template routes (services/about/book/pay/promotions)

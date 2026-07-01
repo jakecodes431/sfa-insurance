@@ -20,15 +20,18 @@ import type {
   InvoiceLineItemRow,
 } from '@/types/database.types';
 import type { LeadNote, LeadActivity } from '@/types/crm';
+import type { Campaign, CampaignEvent } from '@/types/campaigns';
 import { automations as defaultAutomations, type Automation } from '@/config/automations.config';
 
-const KEY = 'sfp.mockStore.v5';
+const KEY = 'sfp.mockStore.v6';
 
 interface MockDb {
   leads: LeadRow[];
   leadNotes: LeadNote[];
   leadActivity: LeadActivity[];
   automations: Automation[];
+  campaigns: Campaign[];
+  campaignEvents: CampaignEvent[];
   bookings: BookingRow[];
   orders: OrderRow[];
   promotions: PromotionRow[];
@@ -251,6 +254,51 @@ function seedAutomations(): Automation[] {
   return JSON.parse(JSON.stringify(defaultAutomations)) as Automation[];
 }
 
+function seedCampaigns(): Campaign[] {
+  return [
+    {
+      id: 'camp-1',
+      name: 'Dental — Facebook Q3',
+      carrier: 'Aetna',
+      product_line: 'dental-vision',
+      agent_url: 'https://www.aetna.com/',
+      slug: 'aetna-dental',
+      embed: false,
+      enabled: true,
+      created_at: '2026-06-20T12:00:00.000Z',
+    },
+    {
+      id: 'camp-2',
+      name: 'Final Expense — Google',
+      carrier: 'Cigna',
+      product_line: 'life-final-expense',
+      agent_url: 'https://www.cigna.com/',
+      slug: 'cigna-final-expense',
+      embed: false,
+      enabled: true,
+      created_at: '2026-06-22T12:00:00.000Z',
+    },
+  ];
+}
+
+function seedCampaignEvents(): CampaignEvent[] {
+  const clicks = (id: string, campaign_id: string, n: number, day: string): CampaignEvent[] =>
+    Array.from({ length: n }, (_, i) => ({
+      id: `${id}-${i}`,
+      campaign_id,
+      kind: 'click' as const,
+      lead_id: null,
+      created_at: `2026-06-${day}T1${i % 9}:00:00.000Z`,
+    }));
+  return [
+    ...clicks('c1c', 'camp-1', 34, '24'),
+    ...clicks('c2c', 'camp-2', 18, '25'),
+    { id: 'cap-1', campaign_id: 'camp-1', kind: 'capture', lead_id: null, created_at: '2026-06-24T15:00:00.000Z' },
+    { id: 'cap-2', campaign_id: 'camp-1', kind: 'capture', lead_id: null, created_at: '2026-06-24T16:30:00.000Z' },
+    { id: 'cap-3', campaign_id: 'camp-2', kind: 'capture', lead_id: null, created_at: '2026-06-25T14:00:00.000Z' },
+  ];
+}
+
 function seedReviews(): ReviewRow[] {
   return [
     {
@@ -358,6 +406,8 @@ function load(): MockDb {
       cache.leadNotes ??= seedLeadNotes();
       cache.leadActivity ??= seedLeadActivity();
       cache.automations ??= seedAutomations();
+      cache.campaigns ??= seedCampaigns();
+      cache.campaignEvents ??= seedCampaignEvents();
       cache.serviceCategories ??= seedCategories(getActiveTenant().id);
       cache.invoices ??= [];
       cache.invoiceLineItems ??= [];
@@ -371,6 +421,8 @@ function load(): MockDb {
     leadNotes: seedLeadNotes(),
     leadActivity: seedLeadActivity(),
     automations: seedAutomations(),
+    campaigns: seedCampaigns(),
+    campaignEvents: seedCampaignEvents(),
     bookings: seedBookings(),
     orders: [],
     promotions: seedPromotions(),

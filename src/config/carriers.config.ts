@@ -68,3 +68,19 @@ export const enrollProducts: Record<string, EnrollProduct> = {
 };
 
 export const enrollSlugs = Object.keys(enrollProducts);
+
+/** Carriers the agent is contracted with — for the admin campaign dropdown. */
+export const CARRIER_OPTIONS = [
+  'Aetna',
+  'Anthem',
+  'Cigna',
+  'UnitedHealthcare',
+  'Humana',
+  'Ameritas',
+  'Oscar',
+  'Healthfirst',
+];
+
+/** Self-serve product lines a campaign can target (Medicare stays consultative). */
+export const CAMPAIGN_PRODUCTS = ['dental-vision', 'life-final-expense'] as const;
+

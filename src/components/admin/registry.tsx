@@ -12,6 +12,7 @@ import type { ComponentType } from 'react';
 import type { AdminModule } from '@/config/admin.config';
 import { OverviewDashboard } from './OverviewDashboard';
 import { AutomationsManager } from './AutomationsManager';
+import { CampaignsManager } from './CampaignsManager';
 import { LeadsManager } from './LeadsManager';
 import { BookingsQueue } from './BookingsQueue';
 import { ServicesTab } from './ServicesTab';
@@ -38,6 +39,7 @@ export const ADMIN_MODULES: AdminModuleDef[] = [
   { id: 'invoices', labelKey: 'admin.tabs.invoices', Component: InvoicesManager },
   { id: 'promotions', labelKey: 'admin.tabs.promotions', Component: PromosEditor },
   { id: 'reviews', labelKey: 'admin.tabs.reviews', Component: ReviewsManager },
+  { id: 'campaigns', labelKey: 'admin.tabs.campaigns', Component: CampaignsManager },
   { id: 'automations', labelKey: 'admin.tabs.automations', Component: AutomationsManager },
   { id: 'orders', labelKey: 'admin.tabs.orders', Component: OrdersList },
   { id: 'content', labelKey: 'admin.tabs.content', Component: SiteContentManager },
