@@ -7,6 +7,7 @@ import { TenantProvider } from '@/lib/tenant';
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 
 const Home = lazy(() => import('@/pages/Home'));
+const Enroll = lazy(() => import('@/pages/Enroll'));
 const LegalPage = lazy(() => import('@/pages/LegalPage'));
 const Admin = lazy(() => import('@/pages/Admin'));
 const Login = lazy(() => import('@/pages/Login'));
@@ -21,6 +22,7 @@ export function App() {
             <Routes>
               <Route element={<AppLayout />}>
                 <Route index element={<Home />} />
+                <Route path="enroll/:product" element={<Enroll />} />
                 <Route path="terms" element={<LegalPage kind="terms" />} />
                 <Route path="privacy" element={<LegalPage kind="privacy" />} />
                 {/* Orphaned starter-template routes (services/about/book/pay/promotions)

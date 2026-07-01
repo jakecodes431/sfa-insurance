@@ -1,4 +1,5 @@
 import { useLayoutEffect, useRef } from 'react';
+import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { businessConfig } from '@/config/business.config';
 import { services } from '@/config/services.config';
@@ -15,6 +16,7 @@ import { buildBusinessJsonLd } from '@/lib/schema';
 import { gsap } from '@/lib/gsap';
 import { asset } from '@/lib/asset';
 import { testimonials } from '@/config/reviews.config';
+import { enrollSlugs } from '@/config/carriers.config';
 
 const CARRIERS = [
   { name: 'Aetna', src: '/carriers/aetna.png' },
@@ -234,12 +236,14 @@ export default function Home() {
 
           <div className="mt-12 rule" />
           <ul>
-            {services.map((s, i) => (
-              <li key={s.id} data-reveal>
-                <a
-                  href="#quote"
-                  className="group grid grid-cols-[auto_1fr] items-start gap-x-6 gap-y-2 py-8 sm:grid-cols-[5rem_1fr_auto] sm:items-center"
-                >
+            {services.map((s, i) => {
+              // Dental/Vision + Life are self-enroll (low compliance) → the enroll funnel.
+              // Medicare + under-65 are consultative → the booking/quote form.
+              const isEnroll = enrollSlugs.includes(s.slug);
+              const rowClass =
+                'group grid grid-cols-[auto_1fr] items-start gap-x-6 gap-y-2 py-8 sm:grid-cols-[5rem_1fr_auto] sm:items-center';
+              const inner = (
+                <>
                   <span className="index-num text-3xl transition-colors group-hover:text-brand-red sm:text-4xl">
                     {String(i + 1).padStart(2, '0')}
                   </span>
@@ -252,13 +256,26 @@ export default function Home() {
                     </p>
                   </div>
                   <span className="col-span-2 inline-flex items-center gap-2 text-sm font-semibold text-brand-red sm:col-span-1 sm:justify-self-end">
-                    {t('nav.book')}
+                    {isEnroll ? 'Enroll online' : t('nav.book')}
                     <ArrowRightIcon className="transition-transform group-hover:translate-x-1" />
                   </span>
-                </a>
-                <div className="rule" />
-              </li>
-            ))}
+                </>
+              );
+              return (
+                <li key={s.id} data-reveal>
+                  {isEnroll ? (
+                    <Link to={`/enroll/${s.slug}`} className={rowClass}>
+                      {inner}
+                    </Link>
+                  ) : (
+                    <a href="#quote" className={rowClass}>
+                      {inner}
+                    </a>
+                  )}
+                  <div className="rule" />
+                </li>
+              );
+            })}
           </ul>
         </div>
       </section>
