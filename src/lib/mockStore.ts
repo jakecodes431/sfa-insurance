@@ -23,7 +23,7 @@ import type { LeadNote, LeadActivity } from '@/types/crm';
 import type { Campaign, CampaignEvent } from '@/types/campaigns';
 import { automations as defaultAutomations, type Automation } from '@/config/automations.config';
 
-const KEY = 'sfp.mockStore.v7';
+const KEY = 'sfp.mockStore.v8';
 
 interface MockDb {
   leads: LeadRow[];
@@ -255,29 +255,34 @@ function seedAutomations(): Automation[] {
 }
 
 function seedCampaigns(): Campaign[] {
+  const mk = (
+    id: string,
+    carrier: string,
+    productLine: 'dental-vision' | 'life-final-expense',
+    slug: string,
+    url: string,
+  ): Campaign => ({
+    id,
+    name: `${carrier} ${productLine === 'dental-vision' ? 'Dental & Vision' : 'Final Expense'}`,
+    carrier,
+    product_line: productLine,
+    agent_url: url,
+    slug,
+    embed: true,
+    enabled: true,
+    created_at: '2026-06-20T12:00:00.000Z',
+  });
   return [
-    {
-      id: 'camp-1',
-      name: 'Dental — Facebook Q3',
-      carrier: 'Aetna',
-      product_line: 'dental-vision',
-      agent_url: 'https://www.aetna.com/',
-      slug: 'aetna-dental',
-      embed: true,
-      enabled: true,
-      created_at: '2026-06-20T12:00:00.000Z',
-    },
-    {
-      id: 'camp-2',
-      name: 'Final Expense — Google',
-      carrier: 'Cigna',
-      product_line: 'life-final-expense',
-      agent_url: 'https://www.cigna.com/',
-      slug: 'cigna-final-expense',
-      embed: true,
-      enabled: true,
-      created_at: '2026-06-22T12:00:00.000Z',
-    },
+    // Dental & Vision — one link per contracted carrier
+    mk('camp-1', 'Aetna', 'dental-vision', 'aetna-dental', 'https://www.aetna.com/'),
+    mk('camp-2', 'Cigna', 'dental-vision', 'cigna-dental', 'https://www.cigna.com/'),
+    mk('camp-3', 'UnitedHealthcare', 'dental-vision', 'uhc-dental', 'https://www.uhc.com/'),
+    mk('camp-4', 'Humana', 'dental-vision', 'humana-dental', 'https://www.humana.com/'),
+    mk('camp-5', 'Ameritas', 'dental-vision', 'ameritas-dental', 'https://www.ameritas.com/'),
+    // Life & Final Expense
+    mk('camp-6', 'Aetna', 'life-final-expense', 'aetna-final-expense', 'https://www.aetna.com/'),
+    mk('camp-7', 'Cigna', 'life-final-expense', 'cigna-final-expense', 'https://www.cigna.com/'),
+    mk('camp-8', 'Humana', 'life-final-expense', 'humana-final-expense', 'https://www.humana.com/'),
   ];
 }
 
@@ -292,10 +297,15 @@ function seedCampaignEvents(): CampaignEvent[] {
     }));
   return [
     ...clicks('c1c', 'camp-1', 34, '24'),
-    ...clicks('c2c', 'camp-2', 18, '25'),
+    ...clicks('c2c', 'camp-2', 21, '25'),
+    ...clicks('c3c', 'camp-3', 12, '26'),
+    ...clicks('c4c', 'camp-4', 9, '25'),
+    ...clicks('c6c', 'camp-6', 16, '24'),
+    ...clicks('c7c', 'camp-7', 7, '26'),
     { id: 'cap-1', campaign_id: 'camp-1', kind: 'capture', lead_id: null, created_at: '2026-06-24T15:00:00.000Z' },
     { id: 'cap-2', campaign_id: 'camp-1', kind: 'capture', lead_id: null, created_at: '2026-06-24T16:30:00.000Z' },
     { id: 'cap-3', campaign_id: 'camp-2', kind: 'capture', lead_id: null, created_at: '2026-06-25T14:00:00.000Z' },
+    { id: 'cap-4', campaign_id: 'camp-6', kind: 'capture', lead_id: null, created_at: '2026-06-24T18:00:00.000Z' },
   ];
 }
 
