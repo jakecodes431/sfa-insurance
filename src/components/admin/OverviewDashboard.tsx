@@ -5,12 +5,13 @@
  */
 import { useTranslation } from 'react-i18next';
 import { useLocale } from '@/hooks/useLocale';
-import { getAllLeads, getAllBookings, getAllReviews } from '@/lib/data';
+import { getAllLeads, getAllBookings } from '@/lib/data';
 import { useAdminData } from '@/hooks/useAdminData';
 import { formatDateTime } from '@/lib/format';
 import { getServiceBySlug } from '@/config/services.config';
+import { testimonials } from '@/config/reviews.config';
 import { ListStatus } from '@/components/admin/ui/primitives';
-import type { LeadRow, BookingRow, ReviewRow, LeadStatus } from '@/types/database.types';
+import type { LeadRow, BookingRow, LeadStatus } from '@/types/database.types';
 
 const PIPELINE: LeadStatus[] = [
   'new',
@@ -26,7 +27,6 @@ const WEEK_MS = 7 * 24 * 60 * 60 * 1000;
 interface Bundle {
   leads: LeadRow[];
   bookings: BookingRow[];
-  reviews: ReviewRow[];
 }
 
 function Stat({ label, value, sub }: { label: string; value: string | number; sub?: string }) {
@@ -45,14 +45,10 @@ export function OverviewDashboard() {
 
   const { data, loading, error, reload } = useAdminData<Bundle>(
     async () => {
-      const [leads, bookings, reviews] = await Promise.all([
-        getAllLeads(),
-        getAllBookings(),
-        getAllReviews(),
-      ]);
-      return { leads, bookings, reviews };
+      const [leads, bookings] = await Promise.all([getAllLeads(), getAllBookings()]);
+      return { leads, bookings };
     },
-    { leads: [], bookings: [], reviews: [] },
+    { leads: [], bookings: [] },
   );
 
   if (loading || error) {
@@ -61,7 +57,7 @@ export function OverviewDashboard() {
     );
   }
 
-  const { leads, bookings, reviews } = data;
+  const { leads, bookings } = data;
   const now = Date.now();
 
   const newLeads = leads.filter((l) => l.status === 'new').length;
@@ -78,7 +74,7 @@ export function OverviewDashboard() {
     )
     .sort((a, b) => new Date(a.scheduled_at!).getTime() - new Date(b.scheduled_at!).getTime());
 
-  const ratings = reviews.map((r) => r.rating).filter((n) => n > 0);
+  const ratings = testimonials.map((r) => r.rating).filter((n) => n > 0);
   const avgRating = ratings.length ? ratings.reduce((a, b) => a + b, 0) / ratings.length : 0;
 
   const byStatus = PIPELINE.map((s) => ({ status: s, n: leads.filter((l) => l.status === s).length }));

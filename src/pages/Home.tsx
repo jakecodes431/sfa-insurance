@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { useLayoutEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { businessConfig } from '@/config/business.config';
 import { services } from '@/config/services.config';
@@ -10,12 +10,11 @@ import { PhoneIcon, ArrowRightIcon, CalendarIcon } from '@/components/ui/Icons';
 import { useScheduling } from '@/components/scheduling/SchedulingProvider';
 import { FaqSection } from '@/components/sections/FaqSection';
 import { AuroraBackground } from '@/components/ui/aurora-background';
-import { getFeaturedReviews } from '@/lib/data';
 import { useContent } from '@/lib/content';
 import { buildBusinessJsonLd } from '@/lib/schema';
 import { gsap } from '@/lib/gsap';
 import { asset } from '@/lib/asset';
-import type { ReviewRow } from '@/types/database.types';
+import { testimonials } from '@/config/reviews.config';
 
 const CARRIERS = [
   { name: 'Aetna', src: '/carriers/aetna.png' },
@@ -55,14 +54,9 @@ const REASSURE = [
 export default function Home() {
   const { t } = useTranslation();
   const ls = useLocalizedService();
-  const [reviews, setReviews] = useState<ReviewRow[]>([]);
   const rootRef = useRef<HTMLDivElement>(null);
   const heroHeadline = useContent('home.hero_headline', t('home.heroHeadline'));
   const heroSub = useContent('home.hero_sub', t('home.heroSub'));
-
-  useEffect(() => {
-    void getFeaturedReviews().then(setReviews);
-  }, []);
 
   // GSAP: hero load timeline, drifting background orbs, cascading carriers, scroll reveals.
   useLayoutEffect(() => {
@@ -101,7 +95,7 @@ export default function Home() {
         title={t('home.seoTitle')}
         description={t('home.seoDescription')}
         path="/"
-        jsonLd={buildBusinessJsonLd(reviews)}
+        jsonLd={buildBusinessJsonLd(testimonials)}
       />
 
       {/* ===== HERO — full screen: aurora bg + centered pill + statement + capture ===== */}
@@ -303,16 +297,16 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ===== TESTIMONIALS — pull-quotes ===== */}
-      {reviews.length > 0 && (
+      {/* ===== TESTIMONIALS — pull-quotes (config-driven, set-and-forget) ===== */}
+      {testimonials.length > 0 && (
         <section id="reviews" className="scroll-mt-24 border-t border-brand-steel bg-brand-charcoal/50">
           <div className="container-content py-16 sm:py-28">
             <div data-reveal>
               <span className="eyebrow">{t('home.reviewsHeading')}</span>
             </div>
             <div className="mt-10 grid gap-12 md:grid-cols-3">
-              {reviews.slice(0, 3).map((r) => (
-                <figure key={r.id} data-reveal className="flex h-full flex-col">
+              {testimonials.slice(0, 3).map((r) => (
+                <figure key={r.name} data-reveal className="flex h-full flex-col">
                   <span className="font-display text-6xl leading-none text-brand-red/30" aria-hidden>
                     &ldquo;
                   </span>
@@ -321,7 +315,7 @@ export default function Home() {
                   </blockquote>
                   <figcaption className="mt-5 flex items-center gap-3">
                     <StarRating rating={r.rating} size="text-sm" />
-                    <span className="text-sm font-semibold text-brand-chrome">{r.author_name}</span>
+                    <span className="text-sm font-semibold text-brand-chrome">{r.name}</span>
                   </figcaption>
                 </figure>
               ))}

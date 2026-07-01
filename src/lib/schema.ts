@@ -4,7 +4,6 @@
  * Swap the @type for a more specific schema.org subtype per client vertical if useful.
  */
 import { businessConfig } from '@/config/business.config';
-import type { ReviewRow } from '@/types/database.types';
 
 const DAY_SCHEMA: Record<string, string> = {
   mon: 'Monday',
@@ -16,7 +15,7 @@ const DAY_SCHEMA: Record<string, string> = {
   sun: 'Sunday',
 };
 
-export function buildBusinessJsonLd(reviews: ReviewRow[]): Record<string, unknown> {
+export function buildBusinessJsonLd(reviews: { rating: number }[]): Record<string, unknown> {
   const origin =
     typeof window !== 'undefined' ? window.location.origin : businessConfig.links.existingSite;
 
