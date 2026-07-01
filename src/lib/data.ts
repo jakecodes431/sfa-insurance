@@ -125,6 +125,19 @@ export async function addLeadNote(leadId: string, body: string): Promise<LeadNot
   throw new Error('Lead notes not wired to the live backend yet.');
 }
 
+/**
+ * Send a marketing email to a set of leads. Demo: logs a send to each lead's timeline.
+ * Live: batches to Resend (separate cold domain) via an Edge Function, honoring the
+ * suppression list + rate limits. Compliance: caller must exclude Medicare + non-consented.
+ */
+export async function sendMarketingEmail(leadIds: string[], subject: string): Promise<number> {
+  if (MOCK_MODE) {
+    for (const id of leadIds) logActivity(id, 'email', `Marketing email sent: ${subject}`);
+    return leadIds.length;
+  }
+  throw new Error('Resend blast not wired to the live backend yet.');
+}
+
 export async function getLeadActivity(leadId: string): Promise<LeadActivity[]> {
   if (MOCK_MODE)
     return mockStore

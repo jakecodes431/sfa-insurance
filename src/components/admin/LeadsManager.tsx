@@ -9,7 +9,8 @@ import { ListStatus, Pagination, SearchInput } from '@/components/admin/ui/primi
 import { useAdminToast } from '@/components/admin/ui/AdminToast';
 import { LeadDetailDrawer } from './LeadDetailDrawer';
 import { AddLeadModal } from './AddLeadModal';
-import { PlusIcon } from '@/components/ui/Icons';
+import { ComposeBlastModal } from './ComposeBlastModal';
+import { PlusIcon, MailIcon } from '@/components/ui/Icons';
 import type { LeadRow, LeadStatus, ProductLineDb } from '@/types/database.types';
 
 /** Client-side CSV export of the current (filtered) leads. */
@@ -61,6 +62,16 @@ export function LeadsManager() {
   const [search, setSearch] = useState('');
   const [selected, setSelected] = useState<LeadRow | null>(null);
   const [addOpen, setAddOpen] = useState(false);
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [blastOpen, setBlastOpen] = useState(false);
+
+  const toggleSelect = (id: string) =>
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
 
   const q = search.trim().toLowerCase();
   const filtered = leads.filter((l) => {
@@ -134,6 +145,20 @@ export function LeadsManager() {
         </div>
       </div>
 
+      {selectedIds.size > 0 && (
+        <div className="mb-4 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-brand-red/40 bg-brand-red/5 px-4 py-2.5">
+          <p className="text-sm text-brand-white">{selectedIds.size} selected</p>
+          <div className="flex gap-2">
+            <button type="button" onClick={() => setBlastOpen(true)} className="btn-primary !py-2 !text-sm">
+              <MailIcon className="text-base" /> Email selected
+            </button>
+            <button type="button" onClick={() => setSelectedIds(new Set())} className="btn-secondary !py-2 !text-sm">
+              Clear
+            </button>
+          </div>
+        </div>
+      )}
+
       <ListStatus
         loading={loading}
         error={error}
@@ -152,7 +177,16 @@ export function LeadsManager() {
                 className="card cursor-pointer transition hover:border-brand-red/40"
               >
                 <div className="flex flex-wrap items-start justify-between gap-3">
-                  <div className="min-w-0">
+                  <div className="flex min-w-0 flex-1 items-start gap-3">
+                    <input
+                      type="checkbox"
+                      checked={selectedIds.has(l.id)}
+                      onChange={() => toggleSelect(l.id)}
+                      onClick={(e) => e.stopPropagation()}
+                      aria-label={`Select ${l.name}`}
+                      className="mt-1 h-4 w-4 shrink-0"
+                    />
+                    <div className="min-w-0">
                     <div className="flex flex-wrap items-center gap-2">
                       <p className="font-medium text-brand-white">{l.name}</p>
                       <span className="rounded-full bg-brand-red/10 px-2 py-0.5 text-xs text-brand-red">
@@ -187,6 +221,7 @@ export function LeadsManager() {
                         </a>
                       )}
                     </div>
+                    </div>
                   </div>
                   <div className="shrink-0" onClick={(e) => e.stopPropagation()}>
                     <Select
@@ -207,6 +242,15 @@ export function LeadsManager() {
 
       <LeadDetailDrawer lead={selected} onClose={() => setSelected(null)} onChanged={reload} />
       <AddLeadModal open={addOpen} onClose={() => setAddOpen(false)} onAdded={reload} />
+      <ComposeBlastModal
+        leads={leads.filter((l) => selectedIds.has(l.id))}
+        open={blastOpen}
+        onClose={() => setBlastOpen(false)}
+        onSent={() => {
+          setSelectedIds(new Set());
+          reload();
+        }}
+      />
     </div>
   );
 }
