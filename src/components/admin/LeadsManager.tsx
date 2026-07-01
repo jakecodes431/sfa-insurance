@@ -10,7 +10,8 @@ import { useAdminToast } from '@/components/admin/ui/AdminToast';
 import { LeadDetailDrawer } from './LeadDetailDrawer';
 import { AddLeadModal } from './AddLeadModal';
 import { ComposeBlastModal } from './ComposeBlastModal';
-import { PlusIcon, MailIcon } from '@/components/ui/Icons';
+import { SmsBookingModal } from './SmsBookingModal';
+import { PlusIcon, MailIcon, MessageIcon } from '@/components/ui/Icons';
 import type { LeadRow, LeadStatus, ProductLineDb } from '@/types/database.types';
 
 /** Client-side CSV export of the current (filtered) leads. */
@@ -64,6 +65,7 @@ export function LeadsManager() {
   const [addOpen, setAddOpen] = useState(false);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [blastOpen, setBlastOpen] = useState(false);
+  const [smsOpen, setSmsOpen] = useState(false);
 
   const toggleSelect = (id: string) =>
     setSelectedIds((prev) => {
@@ -148,9 +150,12 @@ export function LeadsManager() {
       {selectedIds.size > 0 && (
         <div className="mb-4 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-brand-red/40 bg-brand-red/5 px-4 py-2.5">
           <p className="text-sm text-brand-white">{selectedIds.size} selected</p>
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
             <button type="button" onClick={() => setBlastOpen(true)} className="btn-primary !py-2 !text-sm">
               <MailIcon className="text-base" /> Email selected
+            </button>
+            <button type="button" onClick={() => setSmsOpen(true)} className="btn-secondary !py-2 !text-sm">
+              <MessageIcon className="text-base" /> Text booking link
             </button>
             <button type="button" onClick={() => setSelectedIds(new Set())} className="btn-secondary !py-2 !text-sm">
               Clear
@@ -246,6 +251,15 @@ export function LeadsManager() {
         leads={leads.filter((l) => selectedIds.has(l.id))}
         open={blastOpen}
         onClose={() => setBlastOpen(false)}
+        onSent={() => {
+          setSelectedIds(new Set());
+          reload();
+        }}
+      />
+      <SmsBookingModal
+        leads={leads.filter((l) => selectedIds.has(l.id))}
+        open={smsOpen}
+        onClose={() => setSmsOpen(false)}
         onSent={() => {
           setSelectedIds(new Set());
           reload();

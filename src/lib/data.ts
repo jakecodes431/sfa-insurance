@@ -138,6 +138,19 @@ export async function sendMarketingEmail(leadIds: string[], subject: string): Pr
   throw new Error('Resend blast not wired to the live backend yet.');
 }
 
+/**
+ * Text a booking link to a set of leads. Demo: logs an SMS to each lead's timeline.
+ * Live: sends via Twilio (with the agent's Cal link). Compliance: caller must include only
+ * leads with a phone AND consent (TCPA); STOP/HELP handled by the live integration.
+ */
+export async function sendBookingText(leadIds: string[]): Promise<number> {
+  if (MOCK_MODE) {
+    for (const id of leadIds) logActivity(id, 'sms', 'Booking link texted');
+    return leadIds.length;
+  }
+  throw new Error('Twilio SMS not wired to the live backend yet.');
+}
+
 export async function getLeadActivity(leadId: string): Promise<LeadActivity[]> {
   if (MOCK_MODE)
     return mockStore
