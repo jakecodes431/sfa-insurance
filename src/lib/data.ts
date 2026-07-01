@@ -135,7 +135,9 @@ export async function getLeadActivity(leadId: string): Promise<LeadActivity[]> {
 
 // ----------------------------------------------------------------- automations (editable)
 export async function getAutomations(): Promise<Automation[]> {
-  if (MOCK_MODE) return mockStore.db().automations;
+  // Return a fresh array so a save() (which mutates the store in place) yields a new
+  // reference and React actually re-renders the toggles.
+  if (MOCK_MODE) return [...mockStore.db().automations];
   return []; // live: sfp_ins_automations (not wired in the demo)
 }
 
