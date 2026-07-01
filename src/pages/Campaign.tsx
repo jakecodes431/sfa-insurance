@@ -10,6 +10,7 @@ import { useParams, Navigate } from 'react-router-dom';
 import { Seo } from '@/components/seo/Seo';
 import { CheckIcon, ArrowRightIcon } from '@/components/ui/Icons';
 import { createLead, getCampaignBySlug, logCampaignEvent } from '@/lib/data';
+import { MockCarrierForm } from '@/components/campaign/MockCarrierForm';
 import { enrollProducts } from '@/config/carriers.config';
 import type { Campaign as CampaignT } from '@/types/campaigns';
 
@@ -76,31 +77,22 @@ export default function Campaign() {
   // ---- After capture: embedded carrier window (stays on our URL) ----
   if (submitted && campaign.embed) {
     return (
-      <section className="container-content py-5 sm:py-6">
+      <section className="container-content py-8 sm:py-12">
         <Seo title={`${campaign.carrier} — SFA Insurance Group`} path={`/c/${campaign.slug}`} />
-        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-brand-steel pb-3">
-          <p className="text-sm text-brand-chrome">
-            Enrolling with <span className="font-semibold text-brand-white">{campaign.carrier}</span>
-            {product ? ` · ${product.eyebrow}` : ''}
-          </p>
-          <a
-            href={campaign.agent_url}
-            target="_blank"
-            rel="noreferrer noopener"
-            className="text-xs font-medium text-brand-red underline"
-          >
-            Open in a new tab
-          </a>
+        <div className="mx-auto max-w-2xl">
+          <div className="flex flex-wrap items-center justify-between gap-3 border-b border-brand-steel pb-3">
+            <p className="text-sm text-brand-chrome">
+              Enrolling with <span className="font-semibold text-brand-white">{campaign.carrier}</span>
+              {product ? ` · ${product.eyebrow}` : ''}
+            </p>
+            <span className="text-xs text-brand-chrome/70">Secured by {campaign.carrier}</span>
+          </div>
+          {/* Demo placeholder for the embedded carrier enrollment window; the real agent
+              link is dropped in via the campaign's agent_url once provided. */}
+          <div className="mt-4 overflow-hidden rounded-xl border border-brand-steel shadow-card">
+            <MockCarrierForm carrier={campaign.carrier} product={product} />
+          </div>
         </div>
-        <iframe
-          src={campaign.agent_url}
-          title={`${campaign.carrier} enrollment`}
-          className="mt-4 h-[76vh] min-h-[420px] w-full rounded-xl border border-brand-steel bg-white"
-        />
-        <p className="mt-2 text-center text-xs text-brand-chrome/70">
-          If {campaign.carrier}'s page does not load here, they block embedding — use “Open in a new
-          tab”.
-        </p>
       </section>
     );
   }
