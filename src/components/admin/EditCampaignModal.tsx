@@ -134,8 +134,8 @@ export function EditCampaignModal({
 
           <label className="flex items-start gap-2 pt-1 text-xs leading-relaxed text-brand-chrome">
             <input type="checkbox" checked={form.embed} onChange={(e) => patch({ embed: e.target.checked })} className="mt-0.5 h-4 w-4 shrink-0" />
-            Try to embed the carrier page in the popup. Most carriers block this; leave off to hand
-            off in a new tab.
+            Embed the carrier page inside your site (keeps them on your URL). Some carriers block
+            framing — turn this off to hand off in a new tab instead.
           </label>
         </div>
 

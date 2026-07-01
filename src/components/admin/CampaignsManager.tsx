@@ -30,7 +30,7 @@ function blankCampaign(): Campaign {
     product_line: 'dental-vision',
     agent_url: '',
     slug: '',
-    embed: false,
+    embed: true,
     enabled: true,
     created_at: new Date().toISOString(),
   };

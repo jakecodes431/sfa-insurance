@@ -23,7 +23,7 @@ import type { LeadNote, LeadActivity } from '@/types/crm';
 import type { Campaign, CampaignEvent } from '@/types/campaigns';
 import { automations as defaultAutomations, type Automation } from '@/config/automations.config';
 
-const KEY = 'sfp.mockStore.v6';
+const KEY = 'sfp.mockStore.v7';
 
 interface MockDb {
   leads: LeadRow[];
@@ -263,7 +263,7 @@ function seedCampaigns(): Campaign[] {
       product_line: 'dental-vision',
       agent_url: 'https://www.aetna.com/',
       slug: 'aetna-dental',
-      embed: false,
+      embed: true,
       enabled: true,
       created_at: '2026-06-20T12:00:00.000Z',
     },
@@ -274,7 +274,7 @@ function seedCampaigns(): Campaign[] {
       product_line: 'life-final-expense',
       agent_url: 'https://www.cigna.com/',
       slug: 'cigna-final-expense',
-      embed: false,
+      embed: true,
       enabled: true,
       created_at: '2026-06-22T12:00:00.000Z',
     },

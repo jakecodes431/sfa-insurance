@@ -1,12 +1,13 @@
 /**
  * Campaign — the public landing for a carrier campaign link (/c/:slug). Logs the click for
- * attribution, captures the lead (so SFA owns the data), then opens an in-site popup that
- * either embeds the carrier's enrollment page (if it allows framing) or hands off to it.
+ * attribution, captures the lead (so SFA owns the data), then shows the carrier's enrollment
+ * page in an EMBEDDED window that stays on our /c/:slug URL (embed mode). If the carrier
+ * blocks framing (X-Frame-Options), the embed shows blank and the "open in a new tab" link
+ * is the fallback. Campaigns with embed=off use the new-tab handoff instead.
  */
 import { useEffect, useMemo, useState } from 'react';
 import { useParams, Navigate } from 'react-router-dom';
 import { Seo } from '@/components/seo/Seo';
-import { Modal } from '@/components/ui/Modal';
 import { CheckIcon, ArrowRightIcon } from '@/components/ui/Icons';
 import { createLead, getCampaignBySlug, logCampaignEvent } from '@/lib/data';
 import { enrollProducts } from '@/config/carriers.config';
@@ -21,7 +22,7 @@ export default function Campaign() {
   const [zip, setZip] = useState('');
   const [consent, setConsent] = useState(false);
   const [busy, setBusy] = useState(false);
-  const [popup, setPopup] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
 
   useEffect(() => {
     let active = true;
@@ -64,12 +65,65 @@ export default function Campaign() {
         });
         await logCampaignEvent(campaign!.id, 'capture', lead.id);
       }
-      setPopup(true);
+      setSubmitted(true);
     } finally {
       setBusy(false);
     }
   }
 
+  const firstName = name.split(' ')[0] || 'there';
+
+  // ---- After capture: embedded carrier window (stays on our URL) ----
+  if (submitted && campaign.embed) {
+    return (
+      <section className="container-content py-5 sm:py-6">
+        <Seo title={`${campaign.carrier} — SFA Insurance Group`} path={`/c/${campaign.slug}`} />
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-brand-steel pb-3">
+          <p className="text-sm text-brand-chrome">
+            Enrolling with <span className="font-semibold text-brand-white">{campaign.carrier}</span>
+            {product ? ` · ${product.eyebrow}` : ''}
+          </p>
+          <a
+            href={campaign.agent_url}
+            target="_blank"
+            rel="noreferrer noopener"
+            className="text-xs font-medium text-brand-red underline"
+          >
+            Open in a new tab
+          </a>
+        </div>
+        <iframe
+          src={campaign.agent_url}
+          title={`${campaign.carrier} enrollment`}
+          className="mt-4 h-[76vh] min-h-[420px] w-full rounded-xl border border-brand-steel bg-white"
+        />
+        <p className="mt-2 text-center text-xs text-brand-chrome/70">
+          If {campaign.carrier}'s page does not load here, they block embedding — use “Open in a new
+          tab”.
+        </p>
+      </section>
+    );
+  }
+
+  // ---- After capture (non-embed): new-tab handoff ----
+  if (submitted) {
+    return (
+      <section className="container-content max-w-lg py-16 text-center sm:py-24">
+        <Seo title={`${campaign.carrier} — SFA Insurance Group`} path={`/c/${campaign.slug}`} />
+        <h1 className="text-2xl font-bold text-brand-white">You are all set, {firstName}.</h1>
+        <p className="mt-2 text-brand-chrome">
+          Continue to {campaign.carrier} to choose your plan and enroll. A licensed SFA agent is here
+          if you need help.
+        </p>
+        <a href={campaign.agent_url} target="_blank" rel="noreferrer noopener" className="btn-primary mt-6">
+          Open {campaign.carrier} enrollment
+          <ArrowRightIcon className="text-base" />
+        </a>
+      </section>
+    );
+  }
+
+  // ---- Before capture: pitch + capture form ----
   return (
     <section className="container-content py-14 sm:py-20">
       <Seo title={`${campaign.carrier} ${product?.eyebrow ?? ''} — SFA Insurance Group`} path={`/c/${campaign.slug}`} />
@@ -122,47 +176,6 @@ export default function Campaign() {
         SFA Insurance Group is an independent, licensed agency. Enrollment and payment are completed
         on the carrier's website. We are not connected with or endorsed by any government program.
       </p>
-
-      {/* In-site carrier popup: embed if allowed, else hand off. */}
-      <Modal open={popup} onClose={() => setPopup(false)} labelledBy="carrier-title" size={campaign.embed ? 'max-w-4xl' : 'max-w-md'}>
-        <div className="px-6 pb-6 pt-8">
-          <h2 id="carrier-title" className="font-display text-xl font-bold text-brand-white">
-            Enroll with {campaign.carrier}
-          </h2>
-          {campaign.embed ? (
-            <>
-              <p className="mt-1 text-sm text-brand-chrome">Complete your enrollment below.</p>
-              <iframe
-                src={campaign.agent_url}
-                title={`${campaign.carrier} enrollment`}
-                className="mt-4 h-[60vh] min-h-[360px] w-full rounded-xl border border-brand-steel"
-              />
-              <p className="mt-3 text-center text-xs text-brand-chrome/70">
-                Not loading?{' '}
-                <a href={campaign.agent_url} target="_blank" rel="noreferrer noopener" className="text-brand-red underline">
-                  Open {campaign.carrier} in a new tab
-                </a>
-              </p>
-            </>
-          ) : (
-            <>
-              <p className="mt-2 text-sm leading-relaxed text-brand-chrome">
-                You are all set. Continue to {campaign.carrier} to choose your plan and enroll. A
-                licensed SFA agent is here if you need help.
-              </p>
-              <a
-                href={campaign.agent_url}
-                target="_blank"
-                rel="noreferrer noopener"
-                className="btn-primary mt-5 w-full"
-              >
-                Open {campaign.carrier} enrollment
-                <ArrowRightIcon className="text-base" />
-              </a>
-            </>
-          )}
-        </div>
-      </Modal>
     </section>
   );
 }
