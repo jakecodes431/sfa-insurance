@@ -19,11 +19,14 @@ import type {
   InvoiceRow,
   InvoiceLineItemRow,
 } from '@/types/database.types';
+import type { LeadNote, LeadActivity } from '@/types/crm';
 
-const KEY = 'sfp.mockStore.v3';
+const KEY = 'sfp.mockStore.v4';
 
 interface MockDb {
   leads: LeadRow[];
+  leadNotes: LeadNote[];
+  leadActivity: LeadActivity[];
   bookings: BookingRow[];
   orders: OrderRow[];
   promotions: PromotionRow[];
@@ -217,6 +220,30 @@ function seedBookings(): BookingRow[] {
   ];
 }
 
+function seedLeadNotes(): LeadNote[] {
+  return [
+    { id: 'note-1', lead_id: 'lead-2', body: 'Left a voicemail, texted the intake link. Prefers afternoons.', author: 'Agent', created_at: '2026-06-27T20:05:00.000Z' },
+    { id: 'note-2', lead_id: 'lead-3', body: 'Reviewed three final-expense carriers with him. Sending a summary.', author: 'Agent', created_at: '2026-06-27T13:10:00.000Z' },
+    { id: 'note-3', lead_id: 'lead-4', body: 'Enrolled in a $0-premium MA plan. Welcome packet on the way.', author: 'Agent', created_at: '2026-06-26T09:30:00.000Z' },
+  ];
+}
+
+function seedLeadActivity(): LeadActivity[] {
+  return [
+    // Robert Alvarez (new)
+    { id: 'act-1', lead_id: 'lead-1', kind: 'created', label: 'Lead captured from the website form', created_at: '2026-06-28T14:12:00.000Z' },
+    // Diane Whitfield (contacted)
+    { id: 'act-2', lead_id: 'lead-2', kind: 'created', label: 'Lead captured from a Facebook ad', created_at: '2026-06-27T18:40:00.000Z' },
+    { id: 'act-3', lead_id: 'lead-2', kind: 'status', label: 'Status changed to Contacted', created_at: '2026-06-27T20:05:00.000Z' },
+    // James Okafor (appointment_set)
+    { id: 'act-4', lead_id: 'lead-3', kind: 'created', label: 'Lead captured from the website form', created_at: '2026-06-26T15:22:00.000Z' },
+    { id: 'act-5', lead_id: 'lead-3', kind: 'status', label: 'Status changed to Appointment Set', created_at: '2026-06-27T13:10:00.000Z' },
+    // Maria Santos (enrolled)
+    { id: 'act-6', lead_id: 'lead-4', kind: 'created', label: 'Lead captured from the website form', created_at: '2026-06-25T16:02:00.000Z' },
+    { id: 'act-7', lead_id: 'lead-4', kind: 'status', label: 'Status changed to Enrolled', created_at: '2026-06-26T09:30:00.000Z' },
+  ];
+}
+
 function seedReviews(): ReviewRow[] {
   return [
     {
@@ -321,6 +348,8 @@ function load(): MockDb {
       cache = JSON.parse(raw) as MockDb;
       // Backfill arrays added in later phases for stores seeded before they existed.
       cache.leads ??= seedLeads(getActiveTenant().id);
+      cache.leadNotes ??= seedLeadNotes();
+      cache.leadActivity ??= seedLeadActivity();
       cache.serviceCategories ??= seedCategories(getActiveTenant().id);
       cache.invoices ??= [];
       cache.invoiceLineItems ??= [];
@@ -331,6 +360,8 @@ function load(): MockDb {
   }
   cache = {
     leads: seedLeads(getActiveTenant().id),
+    leadNotes: seedLeadNotes(),
+    leadActivity: seedLeadActivity(),
     bookings: seedBookings(),
     orders: [],
     promotions: seedPromotions(),

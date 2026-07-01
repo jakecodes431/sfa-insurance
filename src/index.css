@@ -283,6 +283,15 @@
   }
 }
 
+/* Slide-over drawer (admin lead detail). */
+@keyframes slide-in-right {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+.animate-slide-in-right {
+  animation: slide-in-right 0.28s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
 /* Endless carrier marquee — the track is the carrier list duplicated once and scrolled
    left by exactly one set width, so it loops seamlessly. Both edges feather into the bar
    via a gradient mask (logos dissolve at the ends). Pauses on hover. */

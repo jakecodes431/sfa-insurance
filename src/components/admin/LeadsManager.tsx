@@ -7,7 +7,31 @@ import { useAdminData, usePagination } from '@/hooks/useAdminData';
 import { Select } from '@/components/ui/Select';
 import { ListStatus, Pagination, SearchInput } from '@/components/admin/ui/primitives';
 import { useAdminToast } from '@/components/admin/ui/AdminToast';
+import { LeadDetailDrawer } from './LeadDetailDrawer';
+import { AddLeadModal } from './AddLeadModal';
+import { PlusIcon } from '@/components/ui/Icons';
 import type { LeadRow, LeadStatus, ProductLineDb } from '@/types/database.types';
+
+/** Client-side CSV export of the current (filtered) leads. */
+function exportLeadsCsv(rows: LeadRow[]) {
+  const headers = ['Name', 'Email', 'Phone', 'Zip', 'Product', 'Status', 'Best time', 'Consent', 'Source', 'Created'];
+  const esc = (v: unknown) => `"${String(v ?? '').replace(/"/g, '""')}"`;
+  const lines = [headers.join(',')];
+  for (const l of rows) {
+    lines.push(
+      [l.name, l.email, l.phone, l.zip, l.product_line, l.status, l.best_time, l.consent_contact ? 'yes' : 'no', l.source, l.created_at]
+        .map(esc)
+        .join(','),
+    );
+  }
+  const blob = new Blob([lines.join('\n')], { type: 'text/csv;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'sfa-leads.csv';
+  a.click();
+  URL.revokeObjectURL(url);
+}
 
 const STATUSES: LeadStatus[] = [
   'new',
@@ -35,6 +59,8 @@ export function LeadsManager() {
   const [productFilter, setProductFilter] = useState<ProductLineDb | 'all'>('all');
   const [statusFilter, setStatusFilter] = useState<LeadStatus | 'all'>('all');
   const [search, setSearch] = useState('');
+  const [selected, setSelected] = useState<LeadRow | null>(null);
+  const [addOpen, setAddOpen] = useState(false);
 
   const q = search.trim().toLowerCase();
   const filtered = leads.filter((l) => {
@@ -57,6 +83,25 @@ export function LeadsManager() {
 
   return (
     <div>
+      <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+        <p className="text-sm text-brand-chrome">
+          {filtered.length} {filtered.length === 1 ? 'lead' : 'leads'}
+        </p>
+        <div className="flex gap-2">
+          <button type="button" onClick={() => setAddOpen(true)} className="btn-secondary !py-2 !text-sm">
+            <PlusIcon className="text-base" /> Add lead
+          </button>
+          <button
+            type="button"
+            onClick={() => exportLeadsCsv(filtered)}
+            disabled={filtered.length === 0}
+            className="btn-secondary !py-2 !text-sm disabled:opacity-40"
+          >
+            Export CSV
+          </button>
+        </div>
+      </div>
+
       <div className="mb-4 flex flex-wrap items-end gap-4">
         <div className="text-sm text-brand-chrome">
           {t('admin.leads.filterProduct')}
@@ -101,7 +146,11 @@ export function LeadsManager() {
         <>
           <ul className="space-y-3">
             {pageItems.map((l) => (
-              <li key={l.id} className="card">
+              <li
+                key={l.id}
+                onClick={() => setSelected(l)}
+                className="card cursor-pointer transition hover:border-brand-red/40"
+              >
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div className="min-w-0">
                     <div className="flex flex-wrap items-center gap-2">
@@ -126,7 +175,7 @@ export function LeadsManager() {
                         {l.message}
                       </p>
                     )}
-                    <div className="mt-2 flex flex-wrap gap-3 text-xs">
+                    <div className="mt-2 flex flex-wrap gap-3 text-xs" onClick={(e) => e.stopPropagation()}>
                       {l.phone && (
                         <a className="text-brand-red underline" href={`tel:${l.phone}`}>
                           {t('admin.leads.call')}
@@ -139,7 +188,7 @@ export function LeadsManager() {
                       )}
                     </div>
                   </div>
-                  <div className="shrink-0">
+                  <div className="shrink-0" onClick={(e) => e.stopPropagation()}>
                     <Select
                       className="w-48"
                       aria-label={t('admin.leads.setStatus')}
@@ -155,6 +204,9 @@ export function LeadsManager() {
           <Pagination page={page} pageCount={pageCount} onPage={setPage} />
         </>
       )}
+
+      <LeadDetailDrawer lead={selected} onClose={() => setSelected(null)} onChanged={reload} />
+      <AddLeadModal open={addOpen} onClose={() => setAddOpen(false)} onAdded={reload} />
     </div>
   );
 }

@@ -22,6 +22,25 @@ import type {
   PromoRegistrationRow,
   ReviewRow,
 } from '@/types/database.types';
+import type { LeadNote, LeadActivity, LeadActivityKind } from '@/types/crm';
+
+/** Human label for a status value (appointment_set -> "Appointment Set"). */
+function statusLabel(s: LeadStatus): string {
+  return s.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
+}
+
+/** Append a mock activity entry for a lead (demo timeline). */
+function logActivity(leadId: string, kind: LeadActivityKind, label: string): void {
+  if (!MOCK_MODE) return;
+  mockStore.db().leadActivity.push({
+    id: uuid(),
+    lead_id: leadId,
+    kind,
+    label,
+    created_at: mockStore.nowIso(),
+  });
+  mockStore.save();
+}
 
 // ----------------------------------------------------------------- leads (SFA Insurance)
 /**
@@ -51,6 +70,7 @@ export async function createLead(input: LeadInsert): Promise<LeadRow> {
     };
     mockStore.db().leads.unshift(row);
     mockStore.save();
+    logActivity(row.id, 'created', `Lead captured (${row.source ?? 'website'})`);
     return row;
   }
   return sfp.createLead(input);
@@ -65,14 +85,51 @@ export async function getAllLeads(): Promise<LeadRow[]> {
 export async function setLeadStatus(id: string, status: LeadStatus): Promise<void> {
   if (MOCK_MODE) {
     const l = mockStore.db().leads.find((x) => x.id === id);
-    if (l) {
+    if (l && l.status !== status) {
       l.status = status;
       l.updated_at = mockStore.nowIso();
+      logActivity(id, 'status', `Status changed to ${statusLabel(status)}`);
     }
     mockStore.save();
     return;
   }
   await sfp.updateLead(id, { status });
+}
+
+// ----------------------------------------------------------------- lead notes + activity
+export async function getLeadNotes(leadId: string): Promise<LeadNote[]> {
+  if (MOCK_MODE)
+    return mockStore
+      .db()
+      .leadNotes.filter((n) => n.lead_id === leadId)
+      .sort((a, b) => b.created_at.localeCompare(a.created_at));
+  return []; // live: sfp_ins_lead_notes (not wired in the demo)
+}
+
+export async function addLeadNote(leadId: string, body: string): Promise<LeadNote> {
+  const note: LeadNote = {
+    id: uuid(),
+    lead_id: leadId,
+    body: body.trim(),
+    author: 'Agent',
+    created_at: mockStore.nowIso(),
+  };
+  if (MOCK_MODE) {
+    mockStore.db().leadNotes.unshift(note);
+    mockStore.save();
+    logActivity(leadId, 'note', 'Note added');
+    return note;
+  }
+  throw new Error('Lead notes not wired to the live backend yet.');
+}
+
+export async function getLeadActivity(leadId: string): Promise<LeadActivity[]> {
+  if (MOCK_MODE)
+    return mockStore
+      .db()
+      .leadActivity.filter((a) => a.lead_id === leadId)
+      .sort((a, b) => b.created_at.localeCompare(a.created_at));
+  return [];
 }
 
 // ----------------------------------------------------------------- reviews
