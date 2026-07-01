@@ -11,6 +11,7 @@ import { LeadDetailDrawer } from './LeadDetailDrawer';
 import { AddLeadModal } from './AddLeadModal';
 import { ComposeBlastModal } from './ComposeBlastModal';
 import { SmsBookingModal } from './SmsBookingModal';
+import { LeadFilters } from './LeadFilters';
 import { PlusIcon, MailIcon, MessageIcon } from '@/components/ui/Icons';
 import type { LeadRow, LeadStatus, ProductLineDb } from '@/types/database.types';
 
@@ -53,6 +54,39 @@ const PRODUCTS: ProductLineDb[] = [
 ];
 const PER_PAGE = 10;
 
+const DATE_OPTIONS = [
+  { value: 'all', label: 'All time' },
+  { value: 'today', label: 'Today' },
+  { value: '7d', label: 'Last 7 days' },
+  { value: '30d', label: 'Last 30 days' },
+  { value: 'month', label: 'This month' },
+];
+
+const DAY_MS = 24 * 60 * 60 * 1000;
+
+/** Is a lead's created_at within the selected date window? */
+function withinWindow(createdAt: string, window: string, now: number): boolean {
+  const t = new Date(createdAt).getTime();
+  switch (window) {
+    case 'today': {
+      const start = new Date(now);
+      start.setHours(0, 0, 0, 0);
+      return t >= start.getTime();
+    }
+    case '7d':
+      return now - t <= 7 * DAY_MS;
+    case '30d':
+      return now - t <= 30 * DAY_MS;
+    case 'month': {
+      const ref = new Date(now);
+      const c = new Date(createdAt);
+      return c.getMonth() === ref.getMonth() && c.getFullYear() === ref.getFullYear();
+    }
+    default:
+      return true;
+  }
+}
+
 export function LeadsManager() {
   const { t } = useTranslation();
   const { locale } = useLocale();
@@ -60,6 +94,7 @@ export function LeadsManager() {
   const { data: leads, loading, error, reload } = useAdminData<LeadRow[]>(getAllLeads, []);
   const [productFilter, setProductFilter] = useState<ProductLineDb | 'all'>('all');
   const [statusFilter, setStatusFilter] = useState<LeadStatus | 'all'>('all');
+  const [dateFilter, setDateFilter] = useState('all');
   const [search, setSearch] = useState('');
   const [selected, setSelected] = useState<LeadRow | null>(null);
   const [addOpen, setAddOpen] = useState(false);
@@ -76,9 +111,11 @@ export function LeadsManager() {
     });
 
   const q = search.trim().toLowerCase();
+  const now = Date.now();
   const filtered = leads.filter((l) => {
     if (productFilter !== 'all' && l.product_line !== productFilter) return false;
     if (statusFilter !== 'all' && l.status !== statusFilter) return false;
+    if (dateFilter !== 'all' && !withinWindow(l.created_at, dateFilter, now)) return false;
     if (!q) return true;
     return `${l.name} ${l.phone ?? ''} ${l.email ?? ''} ${l.zip ?? ''}`.toLowerCase().includes(q);
   });
@@ -115,33 +152,24 @@ export function LeadsManager() {
         </div>
       </div>
 
-      <div className="mb-4 flex flex-wrap items-end gap-4">
-        <div className="text-sm text-brand-chrome">
-          {t('admin.leads.filterProduct')}
-          <Select
-            className="mt-1 w-full sm:w-44"
-            aria-label={t('admin.leads.filterProduct')}
-            value={productFilter}
-            onChange={(v) => setProductFilter(v as ProductLineDb | 'all')}
-            options={[
-              { value: 'all', label: t('admin.leads.all') },
-              ...PRODUCTS.map((p) => ({ value: p, label: t(`productLine.${p}`) })),
-            ]}
-          />
-        </div>
-        <div className="text-sm text-brand-chrome">
-          {t('admin.leads.filterStatus')}
-          <Select
-            className="mt-1 w-full sm:w-40"
-            aria-label={t('admin.leads.filterStatus')}
-            value={statusFilter}
-            onChange={(v) => setStatusFilter(v as LeadStatus | 'all')}
-            options={[
-              { value: 'all', label: t('admin.leads.all') },
-              ...STATUSES.map((s) => ({ value: s, label: t(`leadStatus.${s}`) })),
-            ]}
-          />
-        </div>
+      <div className="mb-4 flex flex-wrap items-center gap-3">
+        <LeadFilters
+          product={productFilter}
+          status={statusFilter}
+          date={dateFilter}
+          onProduct={(v) => setProductFilter(v as ProductLineDb | 'all')}
+          onStatus={(v) => setStatusFilter(v as LeadStatus | 'all')}
+          onDate={setDateFilter}
+          productOptions={[
+            { value: 'all', label: t('admin.leads.all') },
+            ...PRODUCTS.map((p) => ({ value: p, label: t(`productLine.${p}`) })),
+          ]}
+          statusOptions={[
+            { value: 'all', label: t('admin.leads.all') },
+            ...STATUSES.map((s) => ({ value: s, label: t(`leadStatus.${s}`) })),
+          ]}
+          dateOptions={DATE_OPTIONS}
+        />
         <div className="min-w-[12rem] flex-1">
           <SearchInput value={search} onChange={setSearch} placeholder={t('admin.common.search')} />
         </div>

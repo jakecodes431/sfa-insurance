@@ -211,6 +211,13 @@ export const MessageIcon = (props: IconProps) => (
   </svg>
 );
 
+/** Funnel — filters. */
+export const FilterIcon = (props: IconProps) => (
+  <svg {...base(props)}>
+    <path d="M3 5h18l-7 8.2V19l-4 2v-7.8L3 5Z" />
+  </svg>
+);
+
 /** Envelope — email channel. */
 export const MailIcon = (props: IconProps) => (
   <svg {...base(props)}>
