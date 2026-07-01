@@ -1,13 +1,17 @@
 /**
  * AutomationsManager — admin view of the automated email (Resend) + SMS (Twilio) follow-up
- * sequences and a recent-activity log. Demo: toggles are local and the log is sample data;
- * the live build wires sends to the client's Resend + Twilio via an Edge Function off
- * sfp_ins_leads. See Notes/.../EMAIL-SMS-AUTOMATION (planned).
+ * sequences. Sequences are editable and persisted (toggle on/off, edit the wording). The
+ * activity log is sample demo data. Live sending wires to the client's Resend + Twilio via
+ * an Edge Function off sfp_ins_leads in the real build.
  */
 import { useState } from 'react';
 import { useLocale } from '@/hooks/useLocale';
 import { formatDateTime } from '@/lib/format';
-import { automations as seedAutomations, automationLog, type Channel } from '@/config/automations.config';
+import { getAutomations, saveAutomation } from '@/lib/data';
+import { useAdminData } from '@/hooks/useAdminData';
+import { automationLog, type Channel, type Automation } from '@/config/automations.config';
+import { ListStatus } from '@/components/admin/ui/primitives';
+import { EditAutomationModal } from './EditAutomationModal';
 import { MailIcon, MessageIcon } from '@/components/ui/Icons';
 
 function ChannelBadge({ channel }: { channel: Channel }) {
@@ -38,11 +42,15 @@ function Toggle({ on, onClick }: { on: boolean; onClick: () => void }) {
 
 export function AutomationsManager() {
   const { locale } = useLocale();
-  const [enabled, setEnabled] = useState<Record<string, boolean>>(
-    Object.fromEntries(seedAutomations.map((a) => [a.id, a.enabled])),
-  );
+  const { data: automations, loading, error, reload } = useAdminData<Automation[]>(getAutomations, []);
+  const [editing, setEditing] = useState<Automation | null>(null);
 
-  const activeCount = Object.values(enabled).filter(Boolean).length;
+  async function toggle(a: Automation) {
+    await saveAutomation({ ...a, enabled: !a.enabled });
+    reload();
+  }
+
+  const activeCount = automations.filter((a) => a.enabled).length;
 
   return (
     <div className="space-y-8">
@@ -52,7 +60,7 @@ export function AutomationsManager() {
           <h3 className="font-display text-lg text-brand-white">Automated follow-up</h3>
           <p className="mt-1 max-w-xl text-sm text-brand-chrome">
             Emails and texts that send on their own when a lead comes in or moves through the
-            pipeline. {activeCount} of {seedAutomations.length} sequences active.
+            pipeline. {activeCount} of {automations.length} sequences active. Edit any of them below.
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
@@ -65,12 +73,13 @@ export function AutomationsManager() {
         </div>
       </div>
 
+      <ListStatus loading={loading} error={error} isEmpty={false} emptyMessage="" onRetry={reload} />
+
       {/* Sequences */}
-      <div className="grid gap-4 lg:grid-cols-2">
-        {seedAutomations.map((a) => {
-          const on = enabled[a.id];
-          return (
-            <section key={a.id} className={`card transition-opacity ${on ? '' : 'opacity-60'}`}>
+      {!loading && !error && (
+        <div className="grid gap-4 lg:grid-cols-2">
+          {automations.map((a) => (
+            <section key={a.id} className={`card transition-opacity ${a.enabled ? '' : 'opacity-60'}`}>
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
                   <div className="flex flex-wrap items-center gap-2">
@@ -83,7 +92,16 @@ export function AutomationsManager() {
                     {a.trigger} · <span className="text-brand-white">{a.timing}</span>
                   </p>
                 </div>
-                <Toggle on={on} onClick={() => setEnabled((e) => ({ ...e, [a.id]: !e[a.id] }))} />
+                <div className="flex shrink-0 items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setEditing(a)}
+                    className="rounded-lg border border-brand-steel px-2.5 py-1 text-xs font-medium text-brand-chrome transition-colors hover:border-brand-red hover:text-brand-white"
+                  >
+                    Edit
+                  </button>
+                  <Toggle on={a.enabled} onClick={() => void toggle(a)} />
+                </div>
               </div>
 
               <ul className="mt-4 space-y-2.5">
@@ -98,9 +116,9 @@ export function AutomationsManager() {
                 ))}
               </ul>
             </section>
-          );
-        })}
-      </div>
+          ))}
+        </div>
+      )}
 
       {/* Recent activity */}
       <section className="card">
@@ -127,6 +145,8 @@ export function AutomationsManager() {
           ))}
         </ul>
       </section>
+
+      <EditAutomationModal automation={editing} onClose={() => setEditing(null)} onSaved={reload} />
     </div>
   );
 }

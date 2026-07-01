@@ -23,6 +23,7 @@ import type {
   ReviewRow,
 } from '@/types/database.types';
 import type { LeadNote, LeadActivity, LeadActivityKind } from '@/types/crm';
+import type { Automation } from '@/config/automations.config';
 
 /** Human label for a status value (appointment_set -> "Appointment Set"). */
 function statusLabel(s: LeadStatus): string {
@@ -130,6 +131,25 @@ export async function getLeadActivity(leadId: string): Promise<LeadActivity[]> {
       .leadActivity.filter((a) => a.lead_id === leadId)
       .sort((a, b) => b.created_at.localeCompare(a.created_at));
   return [];
+}
+
+// ----------------------------------------------------------------- automations (editable)
+export async function getAutomations(): Promise<Automation[]> {
+  if (MOCK_MODE) return mockStore.db().automations;
+  return []; // live: sfp_ins_automations (not wired in the demo)
+}
+
+/** Upsert an automation (enabled flag or edited message content) and persist. */
+export async function saveAutomation(updated: Automation): Promise<void> {
+  if (MOCK_MODE) {
+    const list = mockStore.db().automations;
+    const i = list.findIndex((a) => a.id === updated.id);
+    if (i >= 0) list[i] = updated;
+    else list.push(updated);
+    mockStore.save();
+    return;
+  }
+  throw new Error('Automations not wired to the live backend yet.');
 }
 
 // ----------------------------------------------------------------- reviews

@@ -20,13 +20,15 @@ import type {
   InvoiceLineItemRow,
 } from '@/types/database.types';
 import type { LeadNote, LeadActivity } from '@/types/crm';
+import { automations as defaultAutomations, type Automation } from '@/config/automations.config';
 
-const KEY = 'sfp.mockStore.v4';
+const KEY = 'sfp.mockStore.v5';
 
 interface MockDb {
   leads: LeadRow[];
   leadNotes: LeadNote[];
   leadActivity: LeadActivity[];
+  automations: Automation[];
   bookings: BookingRow[];
   orders: OrderRow[];
   promotions: PromotionRow[];
@@ -244,6 +246,11 @@ function seedLeadActivity(): LeadActivity[] {
   ];
 }
 
+/** Editable automations start as a deep copy of the config defaults. */
+function seedAutomations(): Automation[] {
+  return JSON.parse(JSON.stringify(defaultAutomations)) as Automation[];
+}
+
 function seedReviews(): ReviewRow[] {
   return [
     {
@@ -350,6 +357,7 @@ function load(): MockDb {
       cache.leads ??= seedLeads(getActiveTenant().id);
       cache.leadNotes ??= seedLeadNotes();
       cache.leadActivity ??= seedLeadActivity();
+      cache.automations ??= seedAutomations();
       cache.serviceCategories ??= seedCategories(getActiveTenant().id);
       cache.invoices ??= [];
       cache.invoiceLineItems ??= [];
@@ -362,6 +370,7 @@ function load(): MockDb {
     leads: seedLeads(getActiveTenant().id),
     leadNotes: seedLeadNotes(),
     leadActivity: seedLeadActivity(),
+    automations: seedAutomations(),
     bookings: seedBookings(),
     orders: [],
     promotions: seedPromotions(),
